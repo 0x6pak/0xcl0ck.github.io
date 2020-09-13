@@ -1,0 +1,1064 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  <title>硬编码-opcode - Hexo</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-06-08 14:03" pubdate>
+        2020年6月8日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      22
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">硬编码-opcode</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="Opcode"><a href="#Opcode" class="headerlink" title="Opcode"></a>Opcode</h1><p><a href="https://www.intel.cn/content/www/cn/zh/architecture-and-technology/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.html?wapkw=%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E6%89%8B%E5%86%8C" target="_blank" rel="noopener">intel白皮书PDF</a></p>
+<ul>
+<li>Opcode是一条指令的灵魂(指令结构里，其他部分都可以没有，但是Opcode必须要有)</li>
+<li>Opcode最少是1个字节，最多是3个字节</li>
+<li>Opcode  ModR/M SIB 三个决定了整条指令的长度 </li>
+<li>Opcode决定了ModR/M，ModR/M决定了SIB</li>
+</ul>
+<blockquote>
+<p>定长指令</p>
+<p>只要Opcode确定了，指令长度就确定了</p>
+</blockquote>
+<h2 id="One-Byte-Opcode"><a href="#One-Byte-Opcode" class="headerlink" title="One-Byte Opcode"></a>One-Byte Opcode</h2><p>在线查看：<a href="https://www.sandpile.org/x86/opc_1.htm" target="_blank" rel="noopener">One-Byte Opcode</a></p>
+<p>或者在intel白皮书 Appendix A Opcode Map -&gt; A.3,点击Table A-2 查看</p>
+<blockquote>
+<p>变长指令后面一定跟着ModR/M</p>
+<p>小技巧，怎么通过表来确定变长指令</p>
+<p>只要开头是 E,G开头的，一定是变长指令</p>
+</blockquote>
+<h2 id="Zz表示法"><a href="#Zz表示法" class="headerlink" title="Zz表示法"></a>Zz表示法</h2><p>类似Eb，Gb 这样的。</p>
+<p>在intel白皮书 Appendix A Opcode Map -&gt;A.2 下面的 A.2.1 进行查看具体含义</p>
+<h2 id="寄存器顺序"><a href="#寄存器顺序" class="headerlink" title="寄存器顺序"></a>寄存器顺序</h2><blockquote>
+<p>EAX</p>
+<p>ECX</p>
+<p>EDX</p>
+<p>EBX</p>
+<p>ESP</p>
+<p>EBP</p>
+<p>ESI</p>
+<p>EDI</p>
+</blockquote>
+<p>为什么要记顺序？因为和后面的指令顺序息息相关</p>
+<h2 id="经典定长指令-修改ERX"><a href="#经典定长指令-修改ERX" class="headerlink" title="经典定长指令_修改ERX"></a>经典定长指令_修改ERX</h2><h3 id="PUSH-POP"><a href="#PUSH-POP" class="headerlink" title="PUSH/POP"></a>PUSH/POP</h3><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x50</td>
+<td>PUSH EAX</td>
+</tr>
+<tr>
+<td>0x51</td>
+<td>PUSH ECX</td>
+</tr>
+<tr>
+<td>0x52</td>
+<td>PUSH EDX</td>
+</tr>
+<tr>
+<td>0x53</td>
+<td>PUSH EBX</td>
+</tr>
+<tr>
+<td>0x54</td>
+<td>PUSH ESP</td>
+</tr>
+<tr>
+<td>0x55</td>
+<td>PUSH EBP</td>
+</tr>
+<tr>
+<td>0x56</td>
+<td>PUSH ESI</td>
+</tr>
+<tr>
+<td>0x57</td>
+<td>PUSH EDI</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x58</td>
+<td>POP EAX</td>
+</tr>
+<tr>
+<td>0x59</td>
+<td>POP ECX</td>
+</tr>
+<tr>
+<td>0x5A</td>
+<td>POP EDX</td>
+</tr>
+<tr>
+<td>0x5B</td>
+<td>POP EBX</td>
+</tr>
+<tr>
+<td>0x5C</td>
+<td>POP ESP</td>
+</tr>
+<tr>
+<td>0x5D</td>
+<td>POP EBP</td>
+</tr>
+<tr>
+<td>0x5E</td>
+<td>POP ESI</td>
+</tr>
+<tr>
+<td>0x5F</td>
+<td>POP EDI</td>
+</tr>
+</tbody></table>
+</blockquote>
+<hr>
+<h3 id="INC-DEC"><a href="#INC-DEC" class="headerlink" title="INC/DEC"></a>INC/DEC</h3><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x40 - 0x47</td>
+<td>INC ERC</td>
+</tr>
+<tr>
+<td>0x48 - 0x4F</td>
+<td>DEC ERX</td>
+</tr>
+</tbody></table>
+</blockquote>
+<hr>
+<h3 id="MOV"><a href="#MOV" class="headerlink" title="MOV"></a>MOV</h3><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0xB0 - 0xB7</td>
+<td>MOV Rb,Ib</td>
+</tr>
+<tr>
+<td>0xB8 - 0xBF</td>
+<td>MOV ERX,Iv</td>
+</tr>
+</tbody></table>
+<p>I: Immediate data: the operand value is encoded in subsequent bytes of the instruction.</p>
+<p>b :  Byte, regardless of operand-size attribute.</p>
+<p>Iv: Word, doubleword or quadword (in 64-bit mode), depending on operand-size attribute.</p>
+</blockquote>
+<hr>
+<h3 id="NOP"><a href="#NOP" class="headerlink" title="NOP"></a>NOP</h3><blockquote>
+<p>0x90</p>
+</blockquote>
+<hr>
+<h3 id="XCHG"><a href="#XCHG" class="headerlink" title="XCHG"></a>XCHG</h3><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x90</td>
+<td>NOP</td>
+</tr>
+<tr>
+<td>0x91</td>
+<td>XCHG EAX,ECX</td>
+</tr>
+<tr>
+<td>0x92</td>
+<td>XCHG EAX,EDX</td>
+</tr>
+<tr>
+<td>0x93</td>
+<td>XCHG EAX,EBX</td>
+</tr>
+<tr>
+<td>0x94</td>
+<td>XCHG EAX,ESP</td>
+</tr>
+<tr>
+<td>0x95</td>
+<td>XCHG EAX,EBP</td>
+</tr>
+<tr>
+<td>0x96</td>
+<td>XCHG EAX,ESI</td>
+</tr>
+<tr>
+<td>0x97</td>
+<td>XCHG EAX,EDI</td>
+</tr>
+</tbody></table>
+<p>XCHG EAX,ERX</p>
+</blockquote>
+<hr>
+<h2 id="经典定长指令-修改EIP"><a href="#经典定长指令-修改EIP" class="headerlink" title="经典定长指令_修改EIP"></a>经典定长指令_修改EIP</h2><h3 id="JCC"><a href="#JCC" class="headerlink" title="JCC"></a>JCC</h3><h4 id="0x70-0x7F"><a href="#0x70-0x7F" class="headerlink" title="0x70 - 0x7F"></a>0x70 - 0x7F</h4><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x70</td>
+<td>JO</td>
+</tr>
+<tr>
+<td>0x71</td>
+<td>JNO</td>
+</tr>
+<tr>
+<td>0x72</td>
+<td>JB  JNAE  JC</td>
+</tr>
+<tr>
+<td>0x73</td>
+<td>JNB  JAE  JNC</td>
+</tr>
+<tr>
+<td>0x74</td>
+<td>JZ  JE</td>
+</tr>
+<tr>
+<td>0x75</td>
+<td>JNZ  JNE</td>
+</tr>
+<tr>
+<td>0x76</td>
+<td>JBE  JNA</td>
+</tr>
+<tr>
+<td>0x77</td>
+<td>JNBE  JA</td>
+</tr>
+<tr>
+<td>0x78</td>
+<td>JS</td>
+</tr>
+<tr>
+<td>0x79</td>
+<td>JNS</td>
+</tr>
+<tr>
+<td>0x7A</td>
+<td>JP  JPE</td>
+</tr>
+<tr>
+<td>0x7B</td>
+<td>JNP  JPO</td>
+</tr>
+<tr>
+<td>0x7C</td>
+<td>JL  JNGE</td>
+</tr>
+<tr>
+<td>0x7D</td>
+<td>JNL  JGE</td>
+</tr>
+<tr>
+<td>0x7F</td>
+<td>JNLE  JG</td>
+</tr>
+</tbody></table>
+<p>&lt;1&gt; 条件跳转，后跟一个字节立即数的偏移(有符号)，共两个字节</p>
+<p>&lt;2&gt; 如果条件成立，跳转到 当前指令地址 + 当前指令长度 +Ib</p>
+<p>&lt;3&gt; 最大值：向前(⬇️)跳7F,向后跳(⬆️)80</p>
+</blockquote>
+<h4 id="0x0F-0x80-0x0F-0x8F"><a href="#0x0F-0x80-0x0F-0x8F" class="headerlink" title="0x0F 0x80 - 0x0F 0x8F"></a>0x0F 0x80 - 0x0F 0x8F</h4><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x0F 0x80</td>
+<td>JO</td>
+</tr>
+<tr>
+<td>0x0F 0x81</td>
+<td>JNO</td>
+</tr>
+<tr>
+<td>0x0F 0x82</td>
+<td>JB  JNAE  JC</td>
+</tr>
+<tr>
+<td>0x0F 0x83</td>
+<td>JNB  JAE  JNC</td>
+</tr>
+<tr>
+<td>0x0F 0x84</td>
+<td>JZ  JE</td>
+</tr>
+<tr>
+<td>0x0F 0x85</td>
+<td>JNZ  JNE</td>
+</tr>
+<tr>
+<td>0x0F 0x86</td>
+<td>JBE  JNA</td>
+</tr>
+<tr>
+<td>0x0F 0x87</td>
+<td>JNBE  JA</td>
+</tr>
+<tr>
+<td>0x0F 0x88</td>
+<td>JS</td>
+</tr>
+<tr>
+<td>0x0F 0x89</td>
+<td>JNS</td>
+</tr>
+<tr>
+<td>0x0F 0x8A</td>
+<td>JP  JPE</td>
+</tr>
+<tr>
+<td>0x0F 0x8B</td>
+<td>JNP  JPO</td>
+</tr>
+<tr>
+<td>0x0F 0x8C</td>
+<td>JL  JNGE</td>
+</tr>
+<tr>
+<td>0x0F 0x8D</td>
+<td>JNL  JGE</td>
+</tr>
+<tr>
+<td>0x0F 0x8E</td>
+<td>JLE  JNG</td>
+</tr>
+<tr>
+<td>0x0F 0x8F</td>
+<td>JNLE  JG</td>
+</tr>
+</tbody></table>
+<p>&lt;1&gt; 条件跳转，后跟四个字节立即数的偏移(有符号)，共五个字节</p>
+<p>&lt;2&gt; 如果条件成立，跳转到 当前指令地址 +当前指令长度 + Id</p>
+<p>&lt;3&gt; 最大值：向前跳(⬇️)7FFFFFFF，向后跳(上)80000000</p>
+</blockquote>
+<hr>
+<h4 id="其他指令"><a href="#其他指令" class="headerlink" title="其他指令"></a>其他指令</h4><blockquote>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+<th>字节</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0xE0</td>
+<td>LOOPNE LOOPNZ Ib(Jb)</td>
+<td>2</td>
+<td>ECX = ECX -1. 当ZF = 0 &amp;&amp; ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td>
+</tr>
+<tr>
+<td>0xE1</td>
+<td>LOOPE LOOPNZ Ib(Jb)</td>
+<td>2</td>
+<td>ECX = ECX -1. 当ZF = 1 &amp;&amp; ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td>
+</tr>
+<tr>
+<td>0xE2</td>
+<td>LOOP Ib(Jb)</td>
+<td>2</td>
+<td>ECX = ECX -1. 当ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td>
+</tr>
+<tr>
+<td>0xE3</td>
+<td>JrCXZ Ib(Jb)</td>
+<td>2</td>
+<td>当 ECX = 0 时跳转到 当前指令地址 + 当前指令长度 + Ib</td>
+</tr>
+<tr>
+<td>0xE8</td>
+<td>CALL Id(Jd)</td>
+<td>5</td>
+<td>CALL指令的下一条指令地址入栈后，跳转到 当前指令地址 + 当前指令长度 + Id</td>
+</tr>
+<tr>
+<td>0xE9</td>
+<td>JMP Id(Jd)</td>
+<td>5</td>
+<td>跳转到 当前指令地址 + 当前指令长度 + Id</td>
+</tr>
+</tbody></table>
+<hr>
+<p>8个段寄存器：ES CS SS DS FS GS LDTR TR (固定顺序)</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+<th>字节</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0xEA</td>
+<td>JMP Ap(Ap: 六字节长度的直接地址)</td>
+<td>7</td>
+<td>JMP CS:Id  将Ap中的高2位赋值给CS，低4位直接赋值给EIP，即跳转</td>
+</tr>
+<tr>
+<td>0xEB</td>
+<td>JMP Ib(Jb)</td>
+<td>1</td>
+<td>跳转到 当前指令地址 + 当前指令长度 + Id</td>
+</tr>
+<tr>
+<td>0xC3</td>
+<td>RET</td>
+<td>1</td>
+<td>EIP出栈</td>
+</tr>
+<tr>
+<td>0xC2</td>
+<td>RET Iw</td>
+<td>3</td>
+<td>EIP出栈后，ESP = ESP + Iw</td>
+</tr>
+<tr>
+<td>0xC8</td>
+<td>RETF</td>
+<td>1</td>
+<td>出栈8个字节，低4个字节赋值给EIP，高4个字节中低2位赋值给CS</td>
+</tr>
+<tr>
+<td>0xCA</td>
+<td>RETF Iw</td>
+<td>3</td>
+<td>出栈8个字节，低4个字节赋值给EIP，高4个字节中低2位赋值给CS后，ESP = ESP + Iw</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h2 id="经典变长指令-ModR-M"><a href="#经典变长指令-ModR-M" class="headerlink" title="经典变长指令_ModR/M"></a>经典变长指令_ModR/M</h2><h3 id="ModR-M"><a href="#ModR-M" class="headerlink" title="ModR/M"></a>ModR/M</h3><table>
+<thead>
+<tr>
+<th>编码</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x88</td>
+<td>MOV Eb,Gb</td>
+</tr>
+<tr>
+<td>0x89</td>
+<td>MOV Ev,Gv</td>
+</tr>
+<tr>
+<td>0x8A</td>
+<td>MOV Gb,Eb</td>
+</tr>
+<tr>
+<td>ox8B</td>
+<td>MOV Gv,Ev</td>
+</tr>
+</tbody></table>
+<p>G: 通用寄存器</p>
+<p>E: 寄存器/内存</p>
+<p>b: 字节</p>
+<p>v: Word, doubleword, quadword</p>
+<hr>
+<blockquote>
+<p>ModR/M虽然只有一个字节，但是由三个部分组成</p>
+</blockquote>
+<p><img src="https://www.pediy.com/kssd/pediy10/75557/527384/19791.gif" srcset="/img/loading.gif" alt="https://www.pediy.com/kssd/pediy10/75557/527384/19791.gif"></p>
+<hr>
+<h3 id="Reg-Opcode"><a href="#Reg-Opcode" class="headerlink" title="Reg/Opcode"></a>Reg/Opcode</h3><p>Reg/Opcode(3,4,5位,共3个字节)描述指令中的G部分,即寄存器</p>
+<table>
+<thead>
+<tr>
+<th>寄存器宽度</th>
+<th>000</th>
+<th>001</th>
+<th>010</th>
+<th>011</th>
+<th>100</th>
+<th>101</th>
+<th>110</th>
+<th>111</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>32</td>
+<td>EAX</td>
+<td>ECX</td>
+<td>EDX</td>
+<td>EBX</td>
+<td>ESP</td>
+<td>EBP</td>
+<td>ESI</td>
+<td>EDI</td>
+</tr>
+<tr>
+<td>8</td>
+<td>AL</td>
+<td>CL</td>
+<td>DL</td>
+<td>BL</td>
+<td>AH</td>
+<td>CH</td>
+<td>DH</td>
+<td>BH</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Mod-R-M"><a href="#Mod-R-M" class="headerlink" title="Mod R/M"></a>Mod R/M</h3><blockquote>
+<p>Mod(第6,7位) 和 R/M (第0,1,2位) 共同描述指令中的E部分,即寄存器/内存</p>
+</blockquote>
+<p>那么，这8个位具体是如何工作的呢,Inter操作手册给出了一张表</p>
+<p>Table 2-2</p>
+<p><img src="https://i.loli.net/2020/06/08/Pbqa7GVZORWeF3d.jpg" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/Pbqa7GVZORWeF3d.jpg"></p>
+<p><a href="https://www.sandpile.org/x86/opc_rm.htm" target="_blank" rel="noopener">或者点击查看在线表格</a></p>
+<h3 id="实验："><a href="#实验：" class="headerlink" title="实验："></a>实验：</h3><p>将编码 88 01</p>
+<p>88 : MOV Eb,Gb</p>
+<p>01: 0000 0001 拆分 </p>
+<table>
+<thead>
+<tr>
+<th>Mod</th>
+<th>Reg/Opcode</th>
+<th>R/m</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>00</td>
+<td>000</td>
+<td>001</td>
+</tr>
+</tbody></table>
+<p>那么 MOV Eb,Gb 中的Gb是什么呢？</p>
+<p>b = 字节,G = 寄存器. 指8个位的寄存器，查Reg/Opcode的表(Reg/Opcode 对应 G)</p>
+<p>Gb = AL. 现在 MOV Eb,AL. Eb代表什么</p>
+<p>E = 寄存器/内存 继续查表 Mod + R/m 00001 得出 ECX</p>
+<p>所以 编码 88 01 = MOV ECX,AL</p>
+<h2 id="经典变长指令-Reg-Opcode"><a href="#经典变长指令-Reg-Opcode" class="headerlink" title="经典变长指令_Reg/Opcode"></a>经典变长指令_Reg/Opcode</h2><blockquote>
+<p>我们知道 Reg/Opcode 用来标识寄存器 Mod 和 R/M 共同用来标识寄存器/内存</p>
+<p>但是Reg/Opcode 不仅仅用来标识寄存器，有时候，用来标识opcode</p>
+</blockquote>
+<p>例如：Intel 白皮书Table A-2 中</p>
+<p><img src="https://i.loli.net/2020/06/08/SPvfZckFEXrH8TL.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/SPvfZckFEXrH8TL.png"></p>
+<p>80 81 82 83 这几个编码 并没有明确给出具体的指令是什么</p>
+<blockquote>
+<p>特别说明: 凡是出现Grp的，均参见 Table A-6</p>
+<p>Grp后面小数字 1A: Bits 5, 4, and 3 of ModR/M byte used as an opcode extension (refer to Section A.4, “Opcode Extensions For One-Byte </p>
+<p>And Two-byte Opcodes”).</p>
+<p>第3 4 5位用来作为opcode的扩展</p>
+<p>意思是 只要见到 1A Reg/Opcode就不代表通用寄存器了，而代表一个拓展的opcode</p>
+<p>Grp 后面的数字 代表Table A-6 中的第几组</p>
+</blockquote>
+<p>Table A-6:</p>
+<p><img src="https://i.loli.net/2020/06/08/IDOmhWrUJ8vkBYp.jpg" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/IDOmhWrUJ8vkBYp.jpg"></p>
+<hr>
+<h2 id="经典变长指令-SIB"><a href="#经典变长指令-SIB" class="headerlink" title="经典变长指令_SIB"></a>经典变长指令_SIB</h2><p>有没有SIB 由ModR/M决定</p>
+<blockquote>
+<p>当 Mod 为：00 01 10<br>R/M 为：100<br>的时候,后面跟的值 一定是SIB的值</p>
+<p>Table 2-2 表中出现 [–][–]+disp  就是SIB</p>
+</blockquote>
+<p>ModR/M 后面的一个字节 表示的就是 SIB</p>
+<p>SIB的组成结构：</p>
+<p><img src="https://img-blog.csdn.net/20170824113427615?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQXBvbGxvbl9rcmo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" srcset="/img/loading.gif" alt="https://img-blog.csdn.net/20170824113427615?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQXBvbGxvbl9rcmo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"><br>$$<br>Base + Index*2^S<br>$$</p>
+<blockquote>
+<p>Scale描述2^Scanle 所以只能为 *1 *2 *4 *8</p>
+</blockquote>
+<p>Sib表格：Table 2-3</p>
+<p><img src="https://i.loli.net/2020/06/09/SuWo3GTgI2ZYq48.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/09/SuWo3GTgI2ZYq48.png"></p>
+<p>第一排 为 Base</p>
+<p>SS 为 Sanle</p>
+<p>Index 为 Index</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/">汇编</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/x86/">x86</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/x86/%E7%A1%AC%E7%BC%96%E7%A0%81/">硬编码</a>
+                    
+                  </div>
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/09/PE-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PE-文件结构</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/07/%E7%A1%AC%E7%BC%96%E7%A0%81-%E5%89%8D%E7%BC%80%E6%8C%87%E4%BB%A4/">
+                        <span class="hidden-mobile">硬编码-前缀指令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "硬编码-opcode&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

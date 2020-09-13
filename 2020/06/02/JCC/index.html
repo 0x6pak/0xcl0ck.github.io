@@ -1,0 +1,679 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  <title>JCC - Hexo</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-06-02 18:45" pubdate>
+        2020年6月2日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      957 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      12
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">JCC</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="JCC表格"><a href="#JCC表格" class="headerlink" title="JCC表格"></a>JCC表格</h1><table>
+<thead>
+<tr>
+<th>指令</th>
+<th align="left">作用</th>
+<th align="left">标志寄存器</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JE, JZ</td>
+<td align="left">结果为零则跳转(相等时跳转)</td>
+<td align="left">ZF=1</td>
+</tr>
+<tr>
+<td>JNE, JNZ</td>
+<td align="left">结果不为零则跳转(不相等时跳转)</td>
+<td align="left">ZF=0</td>
+</tr>
+<tr>
+<td>JS</td>
+<td align="left">结果为负则跳转</td>
+<td align="left">SF=1</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td align="left">结果为非负则跳转</td>
+<td align="left">SF=0</td>
+</tr>
+<tr>
+<td>JP, JPE</td>
+<td align="left">结果中1的个数为偶数则跳转</td>
+<td align="left">PF=1</td>
+</tr>
+<tr>
+<td>JNP, JPO</td>
+<td align="left">结果中1的个数为偶数则跳转</td>
+<td align="left">PF=0</td>
+</tr>
+<tr>
+<td>JO</td>
+<td align="left">结果溢出了则跳转</td>
+<td align="left">OF=1</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td align="left">结果没有溢出则跳转</td>
+<td align="left">OF=0</td>
+</tr>
+<tr>
+<td>JB, JNAE</td>
+<td align="left">小于则跳转 (无符号数)</td>
+<td align="left">CF=1</td>
+</tr>
+<tr>
+<td>JNB, JAE</td>
+<td align="left">大于等于则跳转 (无符号数)</td>
+<td align="left">CF=0</td>
+</tr>
+<tr>
+<td>JBE, JNA</td>
+<td align="left">小于等于则跳转 (无符号数)</td>
+<td align="left">CF=1 or ZF=1</td>
+</tr>
+<tr>
+<td>JNBE, JA</td>
+<td align="left">大于则跳转(无符号数)</td>
+<td align="left">CF=0 and ZF=0</td>
+</tr>
+<tr>
+<td>JL, JNGE</td>
+<td align="left">小于则跳转 (有符号数)</td>
+<td align="left">SF≠ OF</td>
+</tr>
+<tr>
+<td>JNL, JGE</td>
+<td align="left">大于等于则跳转 (有符号数)</td>
+<td align="left">SF=OF</td>
+</tr>
+<tr>
+<td>JLE, JNG</td>
+<td align="left">小于等于则跳转 (有符号数)</td>
+<td align="left">ZF=1 or SF≠ OF</td>
+</tr>
+<tr>
+<td>JNLE, JG</td>
+<td align="left">大于则跳转(有符号数)</td>
+<td align="left">ZF=0 and SF=OF</td>
+</tr>
+</tbody></table>
+<h1 id="标志寄存器"><a href="#标志寄存器" class="headerlink" title="标志寄存器"></a>标志寄存器</h1><h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.loli.net/2020/06/02/Kz5jeVR9NnqFWlI.jpg" srcset="/img/loading.gif" alt="Xnip2020-06-02_19-01-50.jpg"></h2><table>
+<thead>
+<tr>
+<th>标志位（外语缩写）</th>
+<th>标志位名称及外语全称</th>
+<th>=1</th>
+<th>=0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CF</td>
+<td>进位标志/Carry Flag</td>
+<td>CY/Carry/进位</td>
+<td>NC/No Carry/无进位</td>
+</tr>
+<tr>
+<td>PF</td>
+<td>奇偶标志/Parity Flag</td>
+<td>PE/Parity Even/偶</td>
+<td>PO/Parity Odd/奇</td>
+</tr>
+<tr>
+<td>AF</td>
+<td>辅助进位标志/Auxiliary Carry Flag</td>
+<td>AC/Auxiliary Carry/进位</td>
+<td>NA/No Auxiliary Carry/无进位</td>
+</tr>
+<tr>
+<td>ZF</td>
+<td>零标志/Zero Flag</td>
+<td>ZR/Zero/等于零</td>
+<td>NZ/Not Zero/不等于零</td>
+</tr>
+<tr>
+<td>SF</td>
+<td>符号标志/Sign Flag</td>
+<td>NG/Negative/负</td>
+<td>PL/Positive/非负</td>
+</tr>
+<tr>
+<td>TF</td>
+<td>跟踪标志/Trace Flag</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>IF</td>
+<td>中断标志/Interrupt Flag</td>
+<td>EI/Enable Interrupt/允许</td>
+<td>DI/Disable Interrupt/禁止</td>
+</tr>
+<tr>
+<td>DF</td>
+<td>方向标志/Direction Flag</td>
+<td>DN/Down/减少</td>
+<td>UP/增加</td>
+</tr>
+<tr>
+<td>OF</td>
+<td>溢出标志/Overflow Flag</td>
+<td>OV/Overflow/溢出</td>
+<td>NV/Not Overflow/未溢出</td>
+</tr>
+</tbody></table>
+<h3 id="CF-bit-0-Carry-flag"><a href="#CF-bit-0-Carry-flag" class="headerlink" title="CF (bit 0) [Carry flag]"></a>CF (bit 0) [Carry flag]</h3><p>   若算术操作产生的结果在最高有效位(most-significant bit)发生进位或借位则将其置1，反之清零。 </p>
+<p>   这个标志通常用来指示无符号整型运算的溢出状态。</p>
+<h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><pre><code class="hljs assembly">MOV AL,0xFE		
+ADD AL,2</code></pre>
+
+<p>   或</p>
+<pre><code class="hljs assembly">MOV AL,0x7F
+SUB AL,0xFF</code></pre>
+
+<h3 id="PF-bit-2-Parity-flag"><a href="#PF-bit-2-Parity-flag" class="headerlink" title="PF (bit 2) [Parity flag]"></a>PF (bit 2) [Parity flag]</h3><p>如果结果的最低有效字节(least-significant byte)包含偶数个1位则该位置1，否则清零。</p>
+<p>也叫奇偶校验位</p>
+<p>利用PF可进行奇偶校验检查</p>
+<h3 id="AF-bit-4-Adjust-flag"><a href="#AF-bit-4-Adjust-flag" class="headerlink" title="AF (bit 4) [Adjust flag]"></a>AF (bit 4) [Adjust flag]</h3><p>如果算术操作在结果的第3位发生进位或借位则将该标志置1，否则清零。这个标志在BCD(binary-code decimal)算术运算中被使用。</p>
+<h3 id="ZF-bit-6-Zero-flag"><a href="#ZF-bit-6-Zero-flag" class="headerlink" title="ZF (bit 6) [Zero flag]"></a>ZF (bit 6) [Zero flag]</h3><p>若结果为0则将其置1，反之清零。</p>
+<p>经常与CMP或者TEST等指令一起使用</p>
+<p>例1:判断2个值是否相等</p>
+<pre><code class="hljs assembly">MOV EAX,100
+MOV ECX,100
+CMP EAX,ECX</code></pre>
+
+<p>(CMP指令相当于SUB指令，但是相减的结果并不保存到第一个操作数中)</p>
+<p>例2:判断某个值是否为0</p>
+<pre><code class="hljs assembly">TEST EAX,EAX</code></pre>
+
+<p>(TEST指令相当于AND指令，但是与等结果并不保存到第一个操作数中)</p>
+<h3 id="SF-bit-7-Sign-flag"><a href="#SF-bit-7-Sign-flag" class="headerlink" title="SF (bit 7) [Sign flag]"></a>SF (bit 7) [Sign flag]</h3><p>该标志被设置为有符号整型的最高有效位。(0指示结果为正，反之则为负)</p>
+<h3 id="OF-bit-11-Overflow-flag"><a href="#OF-bit-11-Overflow-flag" class="headerlink" title="OF (bit 11) [Overflow flag]"></a>OF (bit 11) [Overflow flag]</h3><p>如果整型结果是较大的正数或较小的负数，并且无法匹配目的操作数时将该位置1，反之清零。</p>
+<p>这个标志为带符号整型运算指示溢出状态。</p>
+<p>溢出标志OF用于反映有符号数加减运算所得结果是否溢出</p>
+<p>可以这样理解：</p>
+<p>​    如果是无符号数运算，是否溢出看CF位</p>
+<p>​    如果是有符号数运算，是否溢出看OF位</p>
+<p>例子：</p>
+<pre><code class="hljs assembly">MOV AL,0x7F
+ADD AL,2</code></pre>
+
+<h3 id="DF-bit10-Direction-flag"><a href="#DF-bit10-Direction-flag" class="headerlink" title="DF (bit10)[Direction flag]"></a>DF (bit10)[Direction flag]</h3><p>控制串指令(MOVS, CMPS, SCAS, LODS以及STOS)。设置DF标志使得串指令自动递减（从高地址向低地址方向处理字符串），清除该标志则使得串指令自动递增。STD以及CLD指令分别用于设置以及清除DF标志。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/">汇编</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/x86/">x86</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/x86/%E6%8C%87%E4%BB%A4/">指令</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/JCC/">JCC</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/04/%E6%8C%87%E9%92%88/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">指针</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/01/%E5%8E%9F%E7%A0%81%E5%8F%8D%E7%A0%81%E8%A1%A5%E7%A0%81/">
+                        <span class="hidden-mobile">原码反码补码</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "JCC&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>APCS简介</title>
+    <link href="/2020/06/12/APCS%E7%AE%80%E4%BB%8B/"/>
+    <url>/2020/06/12/APCS%E7%AE%80%E4%BB%8B/</url>
+    
+    <content type="html"><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><strong>APCS</strong>，ARM 过程调用标准(ARM Procedure Call Standard)，提供了紧凑的编写例程的一种机制，定义的例程可以与其他例程交织在一起。最显著的一点是对这些例程来自哪里没有明确的限制。它们可以编译自 C、 Pascal、也可以是用汇编语言写成的。</p><p>APCS 定义了:</p><ul><li>对寄存器使用的限制。</li><li>使用栈的惯例。</li><li>在函数调用之间传递/返回参数。</li><li>可以被‘回溯’的基于栈的结构的格式，用来提供从失败点到程序入口的函数(和给予的参数)的列表。</li></ul><blockquote><p>APCS 不一个单一的给定标准，而是一系列类似但在特定条件下有所区别的标准。例如，APCS-R (用于 RISC OS)规定在函数进入时设置的标志必须在函数退出时复位。在 32 位标准下，并不是总能知道进入标志的(没有 USR_CPSR)，所以你不需要恢复它们。如你所预料的那样，在不同版本间没有相容性。希望恢复标志的代码在它们未被恢复的时候可能会表现失常…</p></blockquote><blockquote><p>如果你开发一个基于 ARM 的系统，不要求你去实现 APCS。但建议你实现它，因为它不难实现，且可以使你获得各种利益。但是，如果要写用来与编译后的 C 连接的汇编代码，则必须使用 APCS。编译器期望特定的条件，在你的加入(add-in)代码中必须得到满足。一个好例子是 APCS 定义 a1 到 a4 可以被破坏，而 v1 到 v6 必须被保护。现在我确信你正在挠头并自言自语“a 是什么? v 是什么?”。所以首先介绍 APCS-R 寄存器定义…</p></blockquote><h2 id="寄存器命名"><a href="#寄存器命名" class="headerlink" title="寄存器命名"></a>寄存器命名</h2><p>APCS 对我们通常称为 R0 到 R14 的寄存器起了不同的名字。使用汇编器预处理器的功能，你可以定义 R0 等名字，但在你修改其他人写的代码的时候，最好还是学习使用 APCS 名字。</p><table><thead><tr><th><code>Reg #</code></th><th><code>APCS</code></th><th>意义</th></tr></thead><tbody><tr><td><code>R0</code></td><td><code>a1</code></td><td>工作寄存器</td></tr><tr><td><code>R1</code></td><td><code>a2</code></td><td>“</td></tr><tr><td><code>R2</code></td><td><code>a3</code></td><td>“</td></tr><tr><td><code>R3</code></td><td><code>a4</code></td><td>“</td></tr><tr><td><code>R4</code></td><td><code>v1</code></td><td>必须保护</td></tr><tr><td><code>R5</code></td><td><code>v2</code></td><td>“</td></tr><tr><td><code>R6</code></td><td><code>v3</code></td><td>“</td></tr><tr><td><code>R7</code></td><td><code>v4</code></td><td>“</td></tr><tr><td><code>R8</code></td><td><code>v5</code></td><td>“</td></tr><tr><td><code>R9</code></td><td><code>v6</code></td><td>“</td></tr><tr><td><code>R10</code></td><td><code>sl</code></td><td>栈限制</td></tr><tr><td><code>R11</code></td><td><code>fp</code></td><td>桢指针</td></tr><tr><td><code>R12</code></td><td><code>ip</code></td><td></td></tr><tr><td><code>R13</code></td><td><code>sp</code></td><td>栈指针</td></tr><tr><td><code>R14</code></td><td><code>lr</code></td><td>连接寄存器</td></tr><tr><td><code>R15</code></td><td><code>pc</code></td><td>程序计数器</td></tr></tbody></table><p> 译注：ip 是指令指针的简写。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>常用的ARM汇编指令基础知识</title>
+    <link href="/2020/06/11/%E5%B8%B8%E7%94%A8%E7%9A%84ARM%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    <url>/2020/06/11/%E5%B8%B8%E7%94%A8%E7%9A%84ARM%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
+    
+    <content type="html"><![CDATA[<h1 id="ARM寄存器"><a href="#ARM寄存器" class="headerlink" title="ARM寄存器"></a>ARM寄存器</h1><h2 id="1-通用寄存器"><a href="#1-通用寄存器" class="headerlink" title="1.通用寄存器"></a>1.通用寄存器</h2><p>1）.未分组寄存器:R0~R7<br>2）.分组寄存器:R8~812<br>R13:SP，常用作堆栈指针，始终指向堆栈的顶部，当一个数据(32位)推入堆栈时，SP(R13的值减4)向下浮动指向下一个地址，即新的栈顶，当数据从堆栈中弹出时，SP(R13的值加4)向上浮动指向新的栈顶。<br>R14:连接寄存器(LR),当执行BL子程序调用指令时，R14中得到R15(程序计数器PC)的备份，其他情况下，R14用作通用寄存器。</p><p><strong>R15:程序计数器(PC):用于控制程序中指令的执行顺序。正常运行时，PC指向CPU运行的下一条指令。每次取值后PC的值会自动修改以指向下一条指令，从而保证了指令按一定的顺序执行。当程序的执行顺序发生改变(如转移)时，需要修改PC的值。</strong></p><h2 id="2-状态寄存器"><a href="#2-状态寄存器" class="headerlink" title="2.状态寄存器"></a>2.状态寄存器</h2><p>CPSR(R16):当前程序状态寄存器，用来保存ALU中的当前操作信息，控制允许和禁止中断、设置处理器的工作模式等。<br>SPSRs:五个备份的程序状态寄存器，用来进行异常处理。当异常发生时，SPSR用于保存CPSR的当前值，从异常退出时可由SPSR来恢复CPSR。<br>img<br>N、Z、C、V均为条件码标志位，他们的内容可被运算的结果所改变。<br>N:正负标志，N=1表示运算的结果为负，N=0表示运算的结果为正或0<br>Z:零标志，Z=1表示运算的结果为0，Z=0表示运算的结果为非0<br>C:进位标志，加法运算产生了进位时则C=1，否则C=0<br> 借位标志，减肥运算产生了借位则C=0，否则C=1</p><p><strong>V:溢出标志，V=1表示有溢出，V=0表示无溢出</strong></p><h2 id="3-地址空间"><a href="#3-地址空间" class="headerlink" title="3.地址空间"></a>3.地址空间</h2><p><strong>程序正常执行时，每执行一条ARM指令，当前指令计数器增加4个字节</strong></p><h1 id="汇编知识"><a href="#汇编知识" class="headerlink" title="汇编知识"></a>汇编知识</h1><h2 id="1-汇编指令格式"><a href="#1-汇编指令格式" class="headerlink" title="1.汇编指令格式"></a><strong>1.汇编指令格式</strong></h2><p>&lt;opcode&gt;{&lt;cond&gt;}{S}&lt;Rd&gt;,&lt;Rn&gt;{,&lt;OP2&gt;}<br>格式中&lt;&gt;的内容必不可少，{}中的内容可省略<br>&lt;opcode&gt;:表示操作码，如ADD表示算术加法<br>{&lt;cond&gt;}:表示指令执行的条件域，如EQ、NE等。<br>{S}:决定指令的执行结果是否影响CPSR的值，使用该后缀则指令执行的结果影响CPSR的值，否则不影响<br>&lt;Rd&gt;:表示目的寄存器<br>&lt;Rn&gt;:表示第一个操作数，为寄存器<br>&lt;op2&gt;:表示第二个操作数，可以是立即数、寄存器或寄存器移位操作数</p><p><strong>例子：ADDEQS R0,R1,#8;其中操作码为ADD,条件域cond为EQ,S表示该指令的执行影响CPSR寄存器的值，目的寄存器Rd为R0,第一个操作数寄存器Rd为R1，第二个操作数OP2为立即数#8</strong></p><h2 id="2-指令的可选后缀"><a href="#2-指令的可选后缀" class="headerlink" title="2.指令的可选后缀"></a>2.指令的可选后缀</h2><p>S：指令执行后程序状态寄存器的条件标志位将被刷新<br>  ADDS R1,R0,#2<br>!:指令中的地址表达式中含有!后缀时，指令执行后，基址寄存器中的地址值将发生变化，变化的结果是：基址寄存器中的值(指令执行后)=指令执行前的值 + 地址偏移量</p><p>  <strong>LDR R3,[R0,#2]!   指令执行后，R0 = R0 + 2</strong></p><h2 id="3-指令的条件执行"><a href="#3-指令的条件执行" class="headerlink" title="3.指令的条件执行"></a>3.指令的条件执行</h2><p>指令的条件后缀只是影响指令是否执行，不影响指令的内容</p><table><thead><tr><th>条件码</th><th>助记符后缀</th><th>标志</th><th>含义</th></tr></thead><tbody><tr><td>0000</td><td>EQ</td><td>Z置位</td><td>相等</td></tr><tr><td>0001</td><td>NE</td><td>Z清零</td><td>不相等</td></tr><tr><td>0010</td><td>CS</td><td>C指令</td><td>无符号数大于或等于</td></tr><tr><td>0011</td><td>CC</td><td>C清零</td><td>无符号数小于</td></tr><tr><td>0100</td><td>MI</td><td>N置位</td><td>负数</td></tr><tr><td>0101</td><td>PL</td><td>N清零</td><td>正数或零</td></tr><tr><td>0110</td><td>VS</td><td>V置位</td><td>溢出</td></tr><tr><td>0111</td><td>VC</td><td>V清零</td><td>未溢出</td></tr><tr><td>1000</td><td>HI</td><td>C置位Z清零</td><td>无符号数大于</td></tr><tr><td>1001</td><td>LS</td><td>C清零Z置位</td><td>无符号数小于或等于</td></tr><tr><td>1010</td><td>GE</td><td>N等于V</td><td>带符号数大于或等于</td></tr><tr><td>1011</td><td>LT</td><td>N不等于V</td><td>带符号数小于</td></tr><tr><td>1100</td><td>GT</td><td>Z清零且(N等于V)</td><td>带符号数大于</td></tr><tr><td>1101</td><td>LE</td><td>Z置位或(N不等于V)</td><td>带符号数小于或等于</td></tr><tr><td>1110</td><td>AL</td><td>忽略</td><td>无条件执行</td></tr></tbody></table><p><strong>例子：ADDEQ R4,R3,#1 相等则相加，即CPSR中Z置位时该指令执行，否则不执行。</strong></p><h2 id="4-ARM指令分类"><a href="#4-ARM指令分类" class="headerlink" title="4.ARM指令分类"></a>4.ARM指令分类</h2><table><thead><tr><th>助记符</th><th>指令功能描述</th></tr></thead><tbody><tr><td>MRC</td><td>从协处理器寄存器到ARM寄存器的数据传输指令</td></tr><tr><td>MRS</td><td>传送CPSR或SPSR的内容到通用寄存器指令</td></tr><tr><td>MSR</td><td>传送通用寄存器到CPSR或SPSR的指令</td></tr><tr><td>MUL</td><td>32位乘法指令</td></tr><tr><td>MLA</td><td>32位乘加指令</td></tr><tr><td>MVN</td><td>数据取反传送指令</td></tr><tr><td>ORR</td><td>逻辑或指令</td></tr><tr><td>RSB</td><td>逆向减法指令</td></tr><tr><td>RSC</td><td>带错位的逆向减法指令</td></tr><tr><td>SBC</td><td>带错位减法指令</td></tr><tr><td>STC</td><td>协处理器寄存器写入存储器指令</td></tr><tr><td>STM</td><td>批量内存字写入指令</td></tr><tr><td>STR</td><td>寄存器到存储器的数据存储指令</td></tr><tr><td>SUB</td><td>减法指令</td></tr><tr><td>SWI</td><td>软件中断指令</td></tr><tr><td>TEQ</td><td>相等测试指令</td></tr><tr><td>TST</td><td>位测试指令</td></tr></tbody></table><h2 id="5-ARM寻址方式"><a href="#5-ARM寻址方式" class="headerlink" title="5.ARM寻址方式"></a>5.ARM寻址方式</h2><p><strong>寻址方式就是根据指令中操作数的信息来寻找操作数实际物理地址的方式</strong></p><h3 id="1）立即数寻址"><a href="#1）立即数寻址" class="headerlink" title="1）立即数寻址"></a>1）立即数寻址</h3><p><strong>MOV R0,#15    #15就是立即数</strong></p><h3 id="2）寄存器寻址"><a href="#2）寄存器寻址" class="headerlink" title="2）寄存器寻址"></a>2）寄存器寻址</h3><p><strong>ADD R0, R1, R2   将R1和R2的内容相加，其结果存放在寄存器R0中</strong></p><h3 id="3）寄存器间接寻址"><a href="#3）寄存器间接寻址" class="headerlink" title="3）寄存器间接寻址"></a>3）寄存器间接寻址</h3><p><strong>LDR R0, [R4]    以寄存器R4的值作为操作数的地址，在存储器中取得一个操作数存入寄存器R0中</strong></p><h3 id="4）寄存器移位寻址"><a href="#4）寄存器移位寻址" class="headerlink" title="4）寄存器移位寻址"></a>4）寄存器移位寻址</h3><p>ADD R0,R1,R2,LSL #1   将R2的值左移一位，所得值与R1相加，存放到R0中</p><p><strong>MOV R0,R1,LSL R3   将R1的值左移R3位，然后将结果存放到R0中</strong></p><h3 id="5）基址变址寻址"><a href="#5）基址变址寻址" class="headerlink" title="5）基址变址寻址"></a>5）基址变址寻址</h3><p>LDR R0,[R1,#4]   将R1的值加4作为操作数的地址，在存储器中取得操作数放入R0中<br>LDR R0,[R1,#4]!  将R1的值加4作为操作数的地址，在存储器中取得操作数放入R0中,然后R1 = R1+4<br>LDR R0,[R1],#4   R0 = [R1],R1 = R1 +4</p><p><strong>LDR R0,[R1,R2]  R0 = [R1+R2]</strong></p><h3 id="6）-多寄存器寻址"><a href="#6）-多寄存器寻址" class="headerlink" title="6）.多寄存器寻址"></a>6）.多寄存器寻址</h3><p>一条指令可以完成多个寄存器值的传送(最多可传送16个通用寄存器)，连续的寄存器用“-”，否则用“，”<br>LDMIA R0!,{R1 - R4}  R1 = [R0],R2=[R0+4],R3=[R0+8],R4=[R0+12]</p><p><strong>后缀IA表示在每次执行玩加载/存储操作后，R0按自长度增加。</strong></p><h3 id="7）-相对寻址"><a href="#7）-相对寻址" class="headerlink" title="7）.相对寻址"></a>7）.相对寻址</h3><p>以程序计数器PC的当前值为基地址，指令中的地址标号作为偏移量，将两者相加之后得到操作数的有效地址，如下图的BL分支跳转<br>   BL proc     跳转到子程序proc处执行<br>   …<br>proc MOV R0,#1</p><p>   <strong>…</strong></p><h3 id="8）-堆栈寻址"><a href="#8）-堆栈寻址" class="headerlink" title="8）.堆栈寻址"></a>8）.堆栈寻址</h3><p>按先进先出的方式工作，堆栈指针用R13表示，总是指向栈顶，LDMFD和STMFD分别表示POP出栈和PUSH进栈<br>STMFD R13!,{R0 - R4};</p><p><strong>LDMFD R13!,{R0 - R4};</strong></p><h2 id="6-数据处理指令"><a href="#6-数据处理指令" class="headerlink" title="6.数据处理指令"></a><strong>6.数据处理指令</strong></h2><h3 id="1）-MOV指令"><a href="#1）-MOV指令" class="headerlink" title="1）. MOV指令"></a><strong>1）. MOV指令</strong></h3><p>MOV {&lt;cond&gt;}{S} Rd,op2      将op2传给Rd<br>MOV R1, R0      将寄存器R0的值传到寄存器R1<br>MOV PC,R14      将寄存器R14的值传到PC，常用于子程序返回<br>MOV R1,R0,LSL #3   将寄存器R0的值左移3位后传给R1</p><p><strong>MOV R0,#5      将立即数5传给R0</strong></p><h3 id="2）-MVN指令"><a href="#2）-MVN指令" class="headerlink" title="2）. MVN指令"></a>2）. MVN指令</h3><p>MVN {&lt;\cond&gt;}{S}Rd, op2      将op2取反传给Rd<br>MVN R0,#0      将0取反后传给R0，R0 = -1</p><p><strong>MVN R1,R2      将R2取反，结果保存到R1</strong></p><h3 id="3）-移位指令"><a href="#3）-移位指令" class="headerlink" title="3）. 移位指令"></a>3）. 移位指令</h3><p>LSL 逻辑左移<br>LSR 逻辑右移<br>ASR 算术右移<br>ROR 循环右移</p><p><strong>RRX 带扩展的循环右移</strong></p><h3 id="4）-ADD加法指令"><a href="#4）-ADD加法指令" class="headerlink" title="4）. ADD加法指令"></a>4）. ADD加法指令</h3><p>ADD{&lt;cond&gt;}{S}Rd, Rn, op2<br>ADD R0,R1,R2       R0 = R1 + R2<br>ADD R0,R1,#5       R0 = R1 + 5</p><p><strong>ADD R0,R1,R2,LSL #2   R0 = R1 + (R2左移2位)</strong></p><h2 id="5）-ADC带进位加法指令"><a href="#5）-ADC带进位加法指令" class="headerlink" title="5）. ADC带进位加法指令"></a>5）. ADC带进位加法指令</h2><p>ADC{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和操作数op2相加，再加上CPSR中C条件标志位的值，并将结果保存到Rd中<br>例：用ADC完成64位加法，设第一个64位操作数保存在R2,R3中，第二个64位操作数放在R4,R5中，结果保存在R0,R1中<br>ADDS R0,R2,R4    低32位相加，产生进位</p><p><strong>ADC R1,R3,R5     高32位相加，加上进位</strong></p><h3 id="6）-SUB减法指令"><a href="#6）-SUB减法指令" class="headerlink" title="6）. SUB减法指令"></a>6）. SUB减法指令</h3><p>SUB{&lt;cond&gt;}{S} Rd,Rn,op2   Rd = Rn - op2<br>SUB R0,R1,R2       R0 = R1 - R2<br>SUB R0,R1,#6       R0 = R1 -6</p><p><strong>SUB R0,R2,R3,LSL #1   R0 = R2 - (R3左移1位)</strong></p><h3 id="7）-SBC带借位减法指令"><a href="#7）-SBC带借位减法指令" class="headerlink" title="7）. SBC带借位减法指令"></a>7）. SBC带借位减法指令</h3><p>SBC{&lt;cond&gt;}{S} Rd,Rn,op2   把Rn的值减去操作数op2，再减去CPSR中的C标志位的反码，并将结果保存到Rd中，Rd = Rn - op2 - !C<br>例:用SBC完成64位减法，设第一个64位操作数保存在R2,R3中，第二个64位操作数放在R4,R5中，结果保存在R0,R1中<br>SUBS R0,R2,R4    低32位相减，S影响CPSR</p><p><strong>SBC R1,R3,R5     高32位相减，去除C的反码</strong></p><h3 id="8）-RSC带借位的逆向减法指令"><a href="#8）-RSC带借位的逆向减法指令" class="headerlink" title="8）. RSC带借位的逆向减法指令"></a>8）. RSC带借位的逆向减法指令</h3><p><strong>RSC{&lt;cond&gt;}{S} Rd,Rn,op2   把操作数op2减去Rn，再减去CPSR中的C标志位的反码，并将结果保存到Rd中，Rd = op2 - Rn - !C</strong></p><h3 id="9）-逻辑运算指令"><a href="#9）-逻辑运算指令" class="headerlink" title="9）. 逻辑运算指令"></a>9）. 逻辑运算指令</h3><p>AND{&lt;cond&gt;}{S} Rd,Rn,op2   按位与，Rd = Rn AND op2<br>ORR{&lt;cond&gt;}{S} Rd,Rn,op2   按位或，Rd = Rn OR op2</p><p><strong>EOR{&lt;cond&gt;}{S} Rd,Rn,op2   按位异或，Rd = Rn EOR op2</strong></p><h3 id="10）-CMP比较指令"><a href="#10）-CMP比较指令" class="headerlink" title="10）. CMP比较指令"></a>10）. CMP比较指令</h3><p>CMP{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和op2进行比较，同时更新CPSR中条件标志位的值(实际上是执行一次减法，但不存储结果)，当操作数Rn大于op2时，则此后带有GT后缀的指令将可以执行(根据相应的指令判断是否执行，如GT,LT等)。<br>CMP R1,#10          比较R1和10，并设置CPSR的标志位</p><p><strong>ADDGT R0,R0,#5        如果R1&gt;10,则执行ADDGT指令，将R0加5</strong></p><h3 id="11）-CMN反值比较指令"><a href="#11）-CMN反值比较指令" class="headerlink" title="11）. CMN反值比较指令"></a>11）. CMN反值比较指令</h3><p>CMN{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和op2取反后进行比较，同时更新CPSR中条件标志位的值(实际上将Rn和op2相加)，后面的指令就可以根据条件标志位决定是否执行。  </p><p><strong>CMN R0,R1    将R0和R1相加，并设置CPSR的值</strong></p><h3 id="12）-MUL-MLA-SMULL-SMLAL-UMULL-UMLAL乘法指令"><a href="#12）-MUL-MLA-SMULL-SMLAL-UMULL-UMLAL乘法指令" class="headerlink" title="12）. MUL/MLA/SMULL/SMLAL/UMULL/UMLAL乘法指令"></a>12）. MUL/MLA/SMULL/SMLAL/UMULL/UMLAL乘法指令</h3><p>MUL   32位乘法指令<br>MLA   32位乘加指令<br>SMULL  64位有符号数乘法指令<br>SMLAL  64位有符号数乘加指令<br>UMULL  64位无符号数乘法指令<br>UMLAL  64位无符号数乘加指令<br>MUL{&lt;cond&gt;}{S} Rd,Rm,Rs     Rd = Rm * Rs<br>MULS R0,R1,R2<br>MLA{&lt;cond&gt;}{S} Rd,Rm,Rs,Rn    Rd = (Rm * Rs) + Rn</p><p><strong>MLAS R0,R1,R2,R3</strong></p><h2 id="7-数据加载与存储指令"><a href="#7-数据加载与存储指令" class="headerlink" title="7.数据加载与存储指令"></a>7.数据加载与存储指令</h2><table><thead><tr><th>助记符</th><th>说明</th><th>操作</th></tr></thead><tbody><tr><td>LDR{}Rd，addr</td><td>加载字数据</td><td>Rd = [addr]</td></tr><tr><td>LDRB{}Rd，addr</td><td>加载无符号字节数据</td><td>Rd = [addr]</td></tr><tr><td>LDRT{}Rd，addr</td><td>以用户模式加载字数据</td><td>Rd = [addr]</td></tr><tr><td>LDRBT{}Rd，addr</td><td>以用户模式加载无符号字节数据</td><td>Rd = [addr]</td></tr><tr><td>LDRH{}Rd，addr</td><td>加载无符号半字数据</td><td>Rd = [addr]</td></tr><tr><td>LDRSB{}Rd，addr</td><td>加载有符号字节数据</td><td>Rd = [addr]</td></tr><tr><td>LDRSH{}Rd，addr</td><td>加载有符号半字数据</td><td>Rd = [addr]</td></tr><tr><td>STR{}Rd，addr</td><td>存储字数据</td><td>[addr] = Rd</td></tr><tr><td>STRB{}Rd，addr</td><td>存储字节数据</td><td>[addr] = Rd</td></tr><tr><td>STRT{}Rd，addr</td><td>以用户模式存储字数据</td><td>[addr] = Rd</td></tr><tr><td>STRBT{}Rd，addr</td><td>以用户模式存储字节数据</td><td>[addr] = Rd</td></tr><tr><td>STRH{}Rd，addr</td><td>存储半字数据</td><td>[addr] = Rd</td></tr><tr><td>LDM{}{type}Rn{!}，regs</td><td>多寄存器加载</td><td>reglist = [Rn...]</td></tr><tr><td>STM{}{type}Rn{!}，regs</td><td>多寄存器存储</td><td>[Rn...] = reglist</td></tr><tr><td>SWP{}Rd,Rm,[Rn]</td><td>寄存器和存储器字数据交换</td><td>Rd=[Rn],[Rn]=Rm(Rn!=Rd或Rm)</td></tr><tr><td>SWP{}B Rd,Rm,[Rn]</td><td>寄存器和存储器字节数据交换</td><td>Rd = [Rn],[Rn] = Rm(Rn!=Rd或Rm)</td></tr></tbody></table><h3 id="1）-LDR-STR字数据加载-存储指令"><a href="#1）-LDR-STR字数据加载-存储指令" class="headerlink" title="1）. LDR/STR字数据加载/存储指令"></a>1）. LDR/STR字数据加载/存储指令</h3><p>LDR/STR{&lt;cond&gt;}{T}Rd,addr    LDR指令用于从存储器中将一个32位的字数据加载到目的寄存器Rd中，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。<br>STR指令用于从源寄存器中将一个32位的字数据存储到存储器中，和LDR相反。后缀T可选。<br>LDR R4,START       将存储地址为START的字数据读入R4<br>STR R5,DATA1       将R5存入存储地址为DATA1中<br>LDR R0,[R1]       将存储器地址为R1的字数据读入存储器R0<br>LDR R0,[R1,R2]      将存储器地址为R1+R2的字数据读入存储器R0<br>LDR R0,[R1,#8]      将存储器地址为R1+8的字数据读入存储器R0<br>LDR R0,[R1,R2,LSL #2]  将存储器地址为R1+R2<em>4的字数据读入存储区R0<br>STR R0,[R1,R2]!     将R0字数据存入存储器地址R1+R2的存储单元中，并将新地址R2+R2写入R2<br>STR R0,[R1,#8]!     将R0字数据存入存储器地址R1+8的存储单元中，并将新地址R2+8写入R2<br>STR R0,[R1,R2,LSL #2]  将R0字数据存入存储器地址R1+R2</em>4的存储单元中，并将新地址R2+R2*4写入R1<br>LDR R0,[R1],#8      将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+8写入R1<br>LDR R0,[R1],R2      将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+R2写入R1</p><p><strong>LDR R0,[R1],R2,LSL #2  将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+R2*4写入R1</strong></p><h3 id="2）-LDRB-STRB字节数据加载-存储指令"><a href="#2）-LDRB-STRB字节数据加载-存储指令" class="headerlink" title="2）. LDRB/STRB字节数据加载/存储指令"></a>2）. LDRB/STRB字节数据加载/存储指令</h3><p><strong>LDRB/STRB{&lt;cond&gt;}{T}Rd,addr     LDRB指令用于从存储器中将一个8位的字节数据加载到目的寄存器中，同时将寄存器的高24位清零，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。</strong></p><p><strong>STRB指令用于从源寄存器中将一个8位的字节数据存储到存储器中，和LDRB相反。后缀T可选。</strong></p><h3 id="3）-LDRH-STRH半字数据加载-存储指令"><a href="#3）-LDRH-STRH半字数据加载-存储指令" class="headerlink" title="3）. LDRH/STRH半字数据加载/存储指令"></a>3）. LDRH/STRH半字数据加载/存储指令</h3><p><strong>LDRH/STRH{&lt;cond&gt;}{T}Rd,addr     LDRH指令用于从存储器中将一个16位的半字数据加载到目的寄存器中，同时将寄存器的高16位清零，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。</strong></p><h3 id="4）-LDM-STM批量数据加载-存储指令"><a href="#4）-LDM-STM批量数据加载-存储指令" class="headerlink" title="4）. LDM/STM批量数据加载/存储指令"></a>4）. LDM/STM批量数据加载/存储指令</h3><p><strong>LDM/STM{&lt;cond&gt;}{&lt;type&gt;}Rn{!},&lt;regs&gt;{^}    LDM用于从基址寄存器所指示的一片连续存储器中读取数据到寄存器列表所指向的多个寄存器中，内存单元的起始地址为基址寄存器Rn的值，各个寄存器由寄存器列表regs表示，该指令一般用于多个寄存器数据的出栈操作</strong></p><p><strong>STM用于将寄存器列表所指向的多个寄存器中的值存入由基址寄存器所指向的一片连续存储器中，内存单元的起始地址为基址寄存器Rn的值，各个寄存器又寄存器列表regs表示。该指令一般用于多个寄存器数据的进栈操作。</strong></p><p>type表示类型，用于数据的存储与读取有以下几种情况：<br>IA：每次传送后地址值加。<br>IB：每次传送前地址值加。<br>DA:每次传送后地址值减。<br>DB:每次传送前地址值减。<br>用于堆栈操作时有如下几种情况：<br>FD:满递减堆栈<br>ED:空递减堆栈<br>FA:满递增堆栈</p><p><strong>EA:空递增堆栈</strong></p><h2 id="5）-SWP字数据交换指令"><a href="#5）-SWP字数据交换指令" class="headerlink" title="5）. SWP字数据交换指令"></a>5）. SWP字数据交换指令</h2><p>SWP{&lt;cond&gt;}&lt;Rd&gt;,&lt;Rm&gt;,[&lt;Rn&gt;]     Rd = [Rn],[Rn] = Rm,当寄存器Rm和目的寄存器Rd为同一个寄存器时，指令交换该急促亲和存储器的内容<br>SWP R0,R1,[R2]      R0 = [R2],[R2] = R1<br>SWP R0,R0,[R1]      R0 = [R1],[R1] = R0</p><p><strong>SWPB指令用于将寄存器Rn指向的存储器中的字节数据加载到目的寄存器Rd中，目的寄存器的高24位清零，同时将Rm中的字数据存储到Rn指向的存储器中。</strong></p><h2 id="8-分支语句"><a href="#8-分支语句" class="headerlink" title="8.分支语句"></a>8.分支语句</h2><table><thead><tr><th>助记符</th><th>说明</th><th>操作</th></tr></thead><tbody><tr><td>B{cond}label</td><td>分支指令</td><td>PC&lt;-label</td></tr><tr><td>BL{cond}label</td><td>带返回的分支指令</td><td>PC&lt;-label，LR=BL后面的第一条指令地址</td></tr><tr><td>BX{cond}Rm</td><td>带状态切换的分支指令</td><td>PC = Rm &amp; 0xffffffe，T=Rm[0] &amp; 1</td></tr><tr><td>BLX{cond}label Rm</td><td>带返回和状态切换的分支指令</td><td>PC=label，T=1 PC； PC = Rm &amp;0xffffffe，T=Rm[0] &amp; 1；LR = BLX后面的第一条指令地址</td></tr></tbody></table><h3 id="1）-分支指令B"><a href="#1）-分支指令B" class="headerlink" title="1）. 分支指令B"></a>1）. 分支指令B</h3><p>B{&lt;cond&gt;}label      跳转到label处执行，PC=label</p><p>例子：<br>backword   SUB R1,R1,#1<br>      CMP R1,#0      比较R1和0<br>      BEQ forward     如果R1=0，跳转到forware处执行<br>      SUB R1,R2,#3<br>      SUB R1,R1,#1<br>forward   ADD R1,R2,#4<br>      ADD R2,R3,#2</p><p>​      <strong>B backword      无条件跳转到backword处执行</strong></p><h3 id="2）-带返回的分支指令BL"><a href="#2）-带返回的分支指令BL" class="headerlink" title="2）. 带返回的分支指令BL"></a>2）. 带返回的分支指令BL</h3><p>BL{&lt;cond&gt;}label     在跳转之前，将PC的当前内容保存在R14(LR)中保存，因此，可以通过将R14的内容重新加载到PC中，返回到跳转指令之后的指令处执行。该指令用于实现子程序的调用，程序的返回可通过把LR寄存器的值复制到PC寄存器中来实现。<br>例子：<br>BL func       跳转到子程序<br>ADD R1,R2,#2     子程序调用完返回后执行的语句，返回地址<br>….<br>func         子程序<br>…</p><p><strong>MOV R15,R14     复制返回地址到PC，实现子程序的返回</strong></p><h3 id="3）-带状态切换的分支指令BX"><a href="#3）-带状态切换的分支指令BX" class="headerlink" title="3）. 带状态切换的分支指令BX"></a>3）. 带状态切换的分支指令BX</h3><p>BX{&lt;cond&gt;} Rm    当执行BX指令时，如果条件cond满足，则处理器会判断Rm的位[0]是否为1，如果为1则跳转时自动将CPSR寄存器的标志T置位，并将目标地址的代码解释为Thumb代码来执行，则处理器会切换到Thumb状态，反之，若Rm的位[0]为0，则跳转时自动将CPSR寄存器的标志T复位，并将目标地址处的代码解释为ARM代码来执行，即处理器会切换到ARM状态。<br>注意：bx lr的作用等同于mov pc,lr。即跳转到lr中存放的地址处。 非零值存储在R0中返回。<br>那么lr存放的是什么地址呢？lr就是连接寄存器(Link Register, LR)，在ARM体系结构中LR的特殊用途有两种：一是用来保存子程序返回地址；二是当异常发生时，LR中保存的值等于异常发生时PC的值减4（或者减2），因此在各种异常模式下可以根据LR的值返回到异常发生前的相应位置继续执行。　　</p><p><strong>当通过BL或BLX指令调用子程序时，硬件自动将子程序返回地址保存在R14寄存器中。在子程序返回时，把LR的值复制到程序计数器PC即可实现子程序返回。</strong></p><h2 id="9-堆栈"><a href="#9-堆栈" class="headerlink" title="9.堆栈"></a>9.堆栈</h2><h3 id="1）-进栈出栈"><a href="#1）-进栈出栈" class="headerlink" title="1）. 进栈出栈"></a>1）. 进栈出栈</h3><p>出栈使用LDM指令，进栈使用STM指令。LDM和STM指令往往结合下面一些参数实现堆栈的操作。<br>FD:满递减堆栈。<br>ED:空递减堆栈。<br>FA:满递增堆栈。<br>EA:空递增堆栈。<br>满堆栈是指SP(R13)指向堆栈的最后一个已使用地址或满位置(也就是SP指向堆栈的最后一个数据项的位置)；相反，空堆栈是指SP指向堆栈的第一个没有使用的地址或空位置。</p><p><strong>LDMFD和STMFD分别指POP出栈和PUSH入栈</strong></p><h3 id="2）-PUSH指令"><a href="#2）-PUSH指令" class="headerlink" title="2）. PUSH指令"></a>2）. PUSH指令</h3><p>PUSH{cond} reglist    PUSH将寄存器推入满递减堆栈<br>PUSH {r0,r4-r7}     将R0,R4-R7寄存器内容压入堆栈<br>2.9.3. POP指令<br>POP{cond} reglist    POP从满递减堆栈中弹出数据到寄存器<br>POP {r0,r4-r7}      将R0,R4-R7寄存器从堆栈中弹出</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>ARM</category>
+      
+      <category>指令</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>ARM指令集</title>
+    <link href="/2020/06/11/ARM%E6%8C%87%E4%BB%A4%E9%9B%86/"/>
+    <url>/2020/06/11/ARM%E6%8C%87%E4%BB%A4%E9%9B%86/</url>
+    
+    <content type="html"><![CDATA[<h1 id="ARM汇编语言"><a href="#ARM汇编语言" class="headerlink" title="ARM汇编语言"></a>ARM汇编语言</h1><h2 id="分析和修改汇编指令"><a href="#分析和修改汇编指令" class="headerlink" title="分析和修改汇编指令"></a>分析和修改汇编指令</h2><blockquote><p>赋值、跳转、算术运算、位移运算、堆栈操作、内存读写指令、函数调用约定</p></blockquote><h2 id="用户模式-usr"><a href="#用户模式-usr" class="headerlink" title="用户模式(usr)"></a>用户模式(usr)</h2><p>不分组寄存器：(R0 - R7)</p><p>分组寄存器：(R8 - R14)</p><p>传递参数与返回值(R0 - R3)</p><p>保存栈顶地址(R13/SP)</p><p>保存函数的返回地址(R14/LR)</p><p>程序计数器(R15/PC)</p><p>状态寄存器(CPSR)</p><h2 id="ARM处理器"><a href="#ARM处理器" class="headerlink" title="ARM处理器"></a>ARM处理器</h2><p>ARM状态(执行32位对齐指令的ARM指令)</p><p>Thumb状态(执行16位对齐指令的Thumb指令)</p><h1 id="ARM指令集"><a href="#ARM指令集" class="headerlink" title="ARM指令集"></a>ARM指令集</h1><h2 id="1-跳转指令"><a href="#1-跳转指令" class="headerlink" title="1.跳转指令"></a>1.跳转指令</h2><table><thead><tr><th>指令</th><th>说明</th></tr></thead><tbody><tr><td>B</td><td>无条件跳转</td></tr><tr><td>BL</td><td>带链接的无条件跳转</td></tr><tr><td>BX</td><td>带状态切换的无条件跳转</td></tr><tr><td>BLX</td><td>带链接和状态切换的无条件跳转</td></tr></tbody></table><h2 id="2-存储器与寄存器交互数据指令-核心"><a href="#2-存储器与寄存器交互数据指令-核心" class="headerlink" title="2.存储器与寄存器交互数据指令 核心"></a>2.存储器与寄存器交互数据指令 核心</h2><blockquote><p>​    存储器(主存，内存)</p><p>​    寄存器中放的数据: 可以是字符串,数,也可以是一个地址,它可以放各种类型的数据</p><p>​    存储地址单元: 地址(如0x00004000)与地址中存在的值</p></blockquote><p>:</p><table><thead><tr><th>指令</th><th>描述</th><th></th><th></th></tr></thead><tbody><tr><td>LDR</td><td>从存储器中加载数据到寄存器</td><td>⬅ Load</td><td>LDR R8,[R9,#04] R8为待加载数据的寄存器，加载值为R9+0x4所指向的存储地址</td></tr><tr><td>STR</td><td>将寄存器的数据存储到储存器</td><td>➡ Store</td><td>STR R8,[R9,#04] 将R8寄存器的数据存储到R9+0x04指向的存储单元</td></tr><tr><td>LDM</td><td>将存储器的数据加载到一个寄存器列表</td><td>➡</td><td>LDM R0,{R1-R3} 将R0指向的存储单元的数据依次加载到R1,R2,R3寄存器</td></tr><tr><td>STM</td><td>将一个寄存器列表的数据存储到指定的存储器</td><td>⬅</td><td></td></tr><tr><td>PUSH</td><td>将寄存器值推入堆栈</td><td></td><td></td></tr><tr><td>POP</td><td>将堆栈值推出到寄存器</td><td></td><td></td></tr><tr><td>SWP</td><td>将寄存器与存储器之间的数据进行交换</td><td></td><td>SWP R1,R1[R0] 将R1寄存器与R0指向的存储单元的内容进行交换</td></tr></tbody></table><blockquote><p>堆，队列：数据结构，栈是竖的，后进先出，且只能从栈顶依次填入数据</p></blockquote><h2 id="3-数据传送指令"><a href="#3-数据传送指令" class="headerlink" title="3.数据传送指令"></a>3.数据传送指令</h2><p>MOV：将立即数或寄存器的数据传送到目标寄存器 ⬅️</p><p>MOV R0,#8 // R0=0x8</p><h2 id="4-数据算术运算指令"><a href="#4-数据算术运算指令" class="headerlink" title="4.数据算术运算指令"></a>4.数据算术运算指令</h2><p>⬅️</p><p>ADD，SUB，MUL，DIV</p><p>有符号，无符号运算：带进位运算</p><h2 id="5-数据逻辑运算指令"><a href="#5-数据逻辑运算指令" class="headerlink" title="5.数据逻辑运算指令"></a>5.数据逻辑运算指令</h2><p>与：AND</p><p>或：ORR</p><p>异或：EOR</p><p>移位：实质是乘，除，类似于小数点移位，但相反：小数点左移，数变小；右移变大。但逻辑位移，左移变大，右移变小，且按2的倍数进行，因为是2进制。</p><p>LSL：逻辑左移 ⬅️</p><p>LSR：逻辑右移 ⬅️</p><p>LSL R0,R1,#2 // R0=R1*4</p><h2 id="6-比较指令"><a href="#6-比较指令" class="headerlink" title="6.比较指令"></a>6.比较指令</h2><p>CMP：比较</p><p>CMP R0,#0    //R0寄存器中的值与0比较</p><p>标志位：如z位，这个都可以在动态调试时，寄存器窗口看到</p><h2 id="7-其他指令"><a href="#7-其他指令" class="headerlink" title="7.其他指令"></a>7.其他指令</h2><p>协处理器指令：SWT (切换用户模式)</p><p>伪指令：DCB</p><h2 id="8-寄存器寻址方式"><a href="#8-寄存器寻址方式" class="headerlink" title="8.寄存器寻址方式"></a>8.寄存器寻址方式</h2><p>立即寻址：MOV R0,#1234    // R0=0x1234</p><p>寄存器寻址：MOV R0,R1    // R0=R1</p><p>寄存器移位寻址：MOV R0,R1,LSL #2    // R0=R1*4</p><p>寄存器间接寻址：LDR R0,[R1]    // 将R1寄存器中的值作为地址，取出地址中的值赋给R0</p><p>寄存器间接基址偏移寻址：LDR R0,[R1,#-4]    // 将R1寄存器的值-0x4的值作为地址，取出地址的值给R0</p><hr><p>对int a=0; 这一句简单高级语言的汇编理解，首先会开辟出一个内存存储单元，然后把0x0这个数放入R0寄存器，然后再把R0寄存器的数据放入内存存储单元，所以：</p><p>MOV R0.#0</p><p>STR R0,[R11,#0x14+var_20]</p><p>注意：</p><p>变量要看存储单元地址，不要以为是寄存器，简单时可以这么看，但试想，如果寄存器时变量，那得要多少寄存器。<font color="#B31F45">寄存器就是一个桥梁，和存储器即存储单元地址交互的东西.</font></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>ARM</category>
+      
+      <category>指令</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>IDA动态调试Android</title>
+    <link href="/2020/06/11/IDA%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95Android/"/>
+    <url>/2020/06/11/IDA%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95Android/</url>
+    
+    <content type="html"><![CDATA[<h1 id="android-server"><a href="#android-server" class="headerlink" title="android_server"></a>android_server</h1><h2 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h2><p>mac路径：IDA显示包内容 -&gt; Contents -&gt; MacOS - &gt; dbgsrv 里有相关的android_server文件</p><h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>先确保adb是否连接</p><p><code>adb devices</code></p><p>打开终端</p><p>#进入android_server所在目录</p><p><code>cd /Applications/ida.app/Contents/MacOS/dbgsrv</code></p><p>#把文件push到安卓目录</p><p><code>adb push android_server /data/local/tmp</code></p><p>#进入adb shell</p><p><code>adb shell</code></p><p>#cd到 /data/local/tmp</p><p><code>cd /data/local/tmp</code></p><p>#给android_server文件可执行权限</p><p><code>chmod 777 android_server</code></p><p>#允许android_server文件</p><p><code>./android_server</code></p><blockquote><p>如果出现错误：not executable: 32-bit ELF file</p><p>push文件到时候换成android_x86_server文件</p></blockquote><h2 id="转发ida端口-开启adb应用调试"><a href="#转发ida端口-开启adb应用调试" class="headerlink" title="转发ida端口 开启adb应用调试"></a>转发ida端口 开启adb应用调试</h2><p><code>adb forward tcp:23946 tcp:23946</code></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>IDA</category>
+      
+      <category>调试</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>PE文件的两种状态</title>
+    <link href="/2020/06/09/PE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%8A%B6%E6%80%81/"/>
+    <url>/2020/06/09/PE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%8A%B6%E6%80%81/</url>
+    
+    <content type="html"><![CDATA[<h1 id="PE"><a href="#PE" class="headerlink" title="PE"></a>PE</h1><h2 id="主要结构体"><a href="#主要结构体" class="headerlink" title="主要结构体"></a>主要结构体</h2><p><img src="http://images.cnitblog.com/blog/461294/201301/29152449-1984d042558b4367ae1fc0c09096cf9f.jpg" srcset="/img/loading.gif" alt="http://images.cnitblog.com/blog/461294/201301/29152449-1984d042558b4367ae1fc0c09096cf9f.jpg"></p><blockquote><p>结构体字节:</p><p>IMAGE_DOS_HEADER(64)</p><p>IMAGE_FILE_HEAHER(20)</p><p>IMAGE_OPTIONAL_HEADER32(224)</p><p>IMAGE_SECTION_HEADER(40)</p></blockquote><p>IMAGE_DOS_HEADER:</p><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IMAGE_DOS_HEADER</span></span><span class="hljs-class">&#123;</span>WORD e_magic; <span class="hljs-comment">//魔术数字，所有MS-DOS兼容的可执行文件都将此值设为0X4D5A(MZ)</span>WORD e_cblp; <span class="hljs-comment">//文件最后页的字节数</span>WORD e_cp; <span class="hljs-comment">//文件页数</span>WORD e_crlc; <span class="hljs-comment">//重定义元素个数</span>WORD e_cparhdr; <span class="hljs-comment">//头部尺寸，以段落为单位</span>WORD e_minalloc; <span class="hljs-comment">//所需的最小附加段</span>WORD e_maxalloc; <span class="hljs-comment">//所需的最大附加段</span>WORD e_ss; <span class="hljs-comment">//初始的SS值(相对偏移量)</span>WORD e_sp; <span class="hljs-comment">//初始的SP值</span>WORD e_csum; <span class="hljs-comment">//校验和</span>WORD e_ip; <span class="hljs-comment">//初始的IP值</span>WORD e_cs; <span class="hljs-comment">//初始的CS值(相对偏移量)</span>WORD e_lfarlc; <span class="hljs-comment">//重分配表文件地址</span>WORD e_ovno; <span class="hljs-comment">//覆盖号</span>WORD e_res[<span class="hljs-number">4</span>]; <span class="hljs-comment">//保留字</span>WORD e_oemid; <span class="hljs-comment">//OEM标识符(相对e_oeminfo)</span>WORD e_oeminfo; <span class="hljs-comment">//OEM信息</span>WORD e_res2[<span class="hljs-number">10</span>]; <span class="hljs-comment">//保留字</span>DWORD e_lfanew; <span class="hljs-comment">//新exe头部的文件地址</span>&#125;IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;</code></pre><h3 id="1⃣️-DOS部分"><a href="#1⃣️-DOS部分" class="headerlink" title="1⃣️ DOS部分"></a>1⃣️ DOS部分</h3><h4 id="IMAGE-DOS-HEADER"><a href="#IMAGE-DOS-HEADER" class="headerlink" title="IMAGE_DOS_HEADER"></a>IMAGE_DOS_HEADER</h4><p>程序的前 64 个字节</p><p>前两个字节为 MZ</p><p>后四个字节为 指向PE文件头开始地址</p><h4 id="DOS-Stub"><a href="#DOS-Stub" class="headerlink" title="DOS_ Stub"></a>DOS_ Stub</h4><p>IMAGE_DOS_HEADER 四个字节之后到 PE文件头标识 地址 都是DOS块</p><p>DOS块由链接器定义</p><h3 id="2⃣️-PE文件头"><a href="#2⃣️-PE文件头" class="headerlink" title="2⃣️ PE文件头"></a>2⃣️ PE文件头</h3><p>IMAGE_NT_HEADERS:</p><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">IMAGE_NT_HEADERS</span></span><span class="hljs-class">&#123;</span>DWORD Signature; <span class="hljs-comment">//PE标识</span>IMAGE_FILE_HEADER FileHeader; <span class="hljs-comment">//标准PE头</span>IMAGE_OPTIONAL_HEADER32 OptionalHeader;<span class="hljs-comment">//扩展PE头</span>&#125;IMAGE_NT_HEADERS,*PIMAGE_NT_HEADERS;</code></pre><blockquote><p>PE头由三块组成</p><p>&lt;1&gt; PE文件头标记 4个字节 50 45 00 00 (“PE”,0,0)  | DWORD Signature;</p><p>&lt;2&gt; 标准PE头: IMAGE_FILE_HEAHER(20字节)     ｜IMAGE_FILE_HEADER FileHeader;</p><p>&lt;3&gt; 扩展PE头: IMAGE_OPTIONAL_HEADER32(224字节) ｜IMAGE_OPTIONAL_HEADER32 OptionalHeader;</p></blockquote><hr><h3 id="3⃣️-节表"><a href="#3⃣️-节表" class="headerlink" title="3⃣️ 节表"></a>3⃣️ 节表</h3><p>节表非常重要，我们的数据都是存在一个个的节里。那么 我到底有多少个节呢？每个节从哪儿开始到哪儿结束呢？里面存储什么数据呢？是能读啊还是能写啊 等等…这些信息，都是由节表来控制的</p><p>节表的大小:</p><blockquote><p>IMAGE_SECTION_HEADER(40字节) </p></blockquote><p>PE<a href="https://baike.baidu.com/item/文件头/2695144" target="_blank" rel="noopener">文件头</a>后是节表，在winnt.h下如下定义</p><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IMAGE_SECTION_HEADER</span></span><span class="hljs-class">&#123;</span><span class="hljs-comment">//IMAGE_SIZEOF_SHORT_NAME=8</span>BYTE Name[IMAGE_SIZEOF_SHORT_NAME];<span class="hljs-comment">//节表名称,如“.text”</span><span class="hljs-keyword">union</span>&#123;DWORD PhysicalAddress;<span class="hljs-comment">//物理地址</span>DWORD VirtualSize;<span class="hljs-comment">//真实长度，这两个值是一个联合结构，可以使用其中的任何一个，//一般是节的数据大小</span>&#125; Misc;DWORD VirtualAddress;<span class="hljs-comment">//RVA</span>DWORD SizeOfRawData;<span class="hljs-comment">//物理长度</span>DWORD PointerToRawData;<span class="hljs-comment">//节基于文件的偏移量</span>DWORD PointerToRelocations;<span class="hljs-comment">//重定位的偏移</span>DWORD PointerToLinenumbers;<span class="hljs-comment">//行号表的偏移</span>WORD NumberOfRelocations;<span class="hljs-comment">//重定位项数目</span>WORD NumberOfLinenumbers;<span class="hljs-comment">//行号表的数目</span>DWORD Characteristics;<span class="hljs-comment">//节属性 如可读，可写，可执行等</span>&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;</code></pre><h4 id="节数据"><a href="#节数据" class="headerlink" title="节数据"></a>节数据</h4><blockquote><p>.text</p><p>.data</p><p>.rsrc</p><p>.reloc</p><p>由不同属性数据组成的不同节</p></blockquote>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>PE-文件结构</title>
+    <link href="/2020/06/09/PE-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/"/>
+    <url>/2020/06/09/PE-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</url>
+    
+    <content type="html"><![CDATA[<h1 id="PE"><a href="#PE" class="headerlink" title="PE"></a>PE</h1><h2 id="可执行文件"><a href="#可执行文件" class="headerlink" title="可执行文件"></a>可执行文件</h2><blockquote><p>可执行文件 (executable file)指的是可以由操作系统进行加载执行的文件</p><p>可执行文件的格式：</p><p>​    Windows平台： PE(Portable Executable)文件结构</p><p>​    Linux平台： ELF(Executable And Linking Format)文件结构</p></blockquote><blockquote><p>哪些领域会用到PE文件结构：</p><p>&lt;1&gt; 病毒与反病毒</p><p>&lt;2&gt; 外挂与反外挂</p><p>&lt;3&gt; 加壳与脱壳(保护与破解)</p><p>&lt;4&gt; 无源码修改功能 汉化等</p></blockquote><h2 id="如何识别PE文件"><a href="#如何识别PE文件" class="headerlink" title="如何识别PE文件"></a>如何识别PE文件</h2><blockquote><p>&lt;1&gt; PE文件的特征(PE指纹)</p><p>​    分别打开 .exe .dll .sys 等文件，观察特征前两个字节。</p><p>&lt;2&gt; 不要仅仅通过文件的后缀名来认定PE文件</p></blockquote><p>PE指纹:</p><p>前两个字节 : 4D 5A (MZ)</p><p>地址 0000003ch 存储着 50 45(PE) 的地址</p><h2 id="PE文件的整体结构"><a href="#PE文件的整体结构" class="headerlink" title="PE文件的整体结构"></a>PE文件的整体结构</h2><p><img src="http://images.cnitblog.com/blog/461294/201301/29152449-1984d042558b4367ae1fc0c09096cf9f.jpg" srcset="/img/loading.gif" alt="http://images.cnitblog.com/blog/461294/201301/29152449-1984d042558b4367ae1fc0c09096cf9f.jpg"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>PE</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>硬编码-opcode</title>
+    <link href="/2020/06/08/%E7%A1%AC%E7%BC%96%E7%A0%81-Opcode/"/>
+    <url>/2020/06/08/%E7%A1%AC%E7%BC%96%E7%A0%81-Opcode/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Opcode"><a href="#Opcode" class="headerlink" title="Opcode"></a>Opcode</h1><p><a href="https://www.intel.cn/content/www/cn/zh/architecture-and-technology/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.html?wapkw=%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E6%89%8B%E5%86%8C" target="_blank" rel="noopener">intel白皮书PDF</a></p><ul><li>Opcode是一条指令的灵魂(指令结构里，其他部分都可以没有，但是Opcode必须要有)</li><li>Opcode最少是1个字节，最多是3个字节</li><li>Opcode  ModR/M SIB 三个决定了整条指令的长度 </li><li>Opcode决定了ModR/M，ModR/M决定了SIB</li></ul><blockquote><p>定长指令</p><p>只要Opcode确定了，指令长度就确定了</p></blockquote><h2 id="One-Byte-Opcode"><a href="#One-Byte-Opcode" class="headerlink" title="One-Byte Opcode"></a>One-Byte Opcode</h2><p>在线查看：<a href="https://www.sandpile.org/x86/opc_1.htm" target="_blank" rel="noopener">One-Byte Opcode</a></p><p>或者在intel白皮书 Appendix A Opcode Map -&gt; A.3,点击Table A-2 查看</p><blockquote><p>变长指令后面一定跟着ModR/M</p><p>小技巧，怎么通过表来确定变长指令</p><p>只要开头是 E,G开头的，一定是变长指令</p></blockquote><h2 id="Zz表示法"><a href="#Zz表示法" class="headerlink" title="Zz表示法"></a>Zz表示法</h2><p>类似Eb，Gb 这样的。</p><p>在intel白皮书 Appendix A Opcode Map -&gt;A.2 下面的 A.2.1 进行查看具体含义</p><h2 id="寄存器顺序"><a href="#寄存器顺序" class="headerlink" title="寄存器顺序"></a>寄存器顺序</h2><blockquote><p>EAX</p><p>ECX</p><p>EDX</p><p>EBX</p><p>ESP</p><p>EBP</p><p>ESI</p><p>EDI</p></blockquote><p>为什么要记顺序？因为和后面的指令顺序息息相关</p><h2 id="经典定长指令-修改ERX"><a href="#经典定长指令-修改ERX" class="headerlink" title="经典定长指令_修改ERX"></a>经典定长指令_修改ERX</h2><h3 id="PUSH-POP"><a href="#PUSH-POP" class="headerlink" title="PUSH/POP"></a>PUSH/POP</h3><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x50</td><td>PUSH EAX</td></tr><tr><td>0x51</td><td>PUSH ECX</td></tr><tr><td>0x52</td><td>PUSH EDX</td></tr><tr><td>0x53</td><td>PUSH EBX</td></tr><tr><td>0x54</td><td>PUSH ESP</td></tr><tr><td>0x55</td><td>PUSH EBP</td></tr><tr><td>0x56</td><td>PUSH ESI</td></tr><tr><td>0x57</td><td>PUSH EDI</td></tr><tr><td></td><td></td></tr><tr><td>0x58</td><td>POP EAX</td></tr><tr><td>0x59</td><td>POP ECX</td></tr><tr><td>0x5A</td><td>POP EDX</td></tr><tr><td>0x5B</td><td>POP EBX</td></tr><tr><td>0x5C</td><td>POP ESP</td></tr><tr><td>0x5D</td><td>POP EBP</td></tr><tr><td>0x5E</td><td>POP ESI</td></tr><tr><td>0x5F</td><td>POP EDI</td></tr></tbody></table></blockquote><hr><h3 id="INC-DEC"><a href="#INC-DEC" class="headerlink" title="INC/DEC"></a>INC/DEC</h3><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x40 - 0x47</td><td>INC ERC</td></tr><tr><td>0x48 - 0x4F</td><td>DEC ERX</td></tr></tbody></table></blockquote><hr><h3 id="MOV"><a href="#MOV" class="headerlink" title="MOV"></a>MOV</h3><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0xB0 - 0xB7</td><td>MOV Rb,Ib</td></tr><tr><td>0xB8 - 0xBF</td><td>MOV ERX,Iv</td></tr></tbody></table><p>I: Immediate data: the operand value is encoded in subsequent bytes of the instruction.</p><p>b :  Byte, regardless of operand-size attribute.</p><p>Iv: Word, doubleword or quadword (in 64-bit mode), depending on operand-size attribute.</p></blockquote><hr><h3 id="NOP"><a href="#NOP" class="headerlink" title="NOP"></a>NOP</h3><blockquote><p>0x90</p></blockquote><hr><h3 id="XCHG"><a href="#XCHG" class="headerlink" title="XCHG"></a>XCHG</h3><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x90</td><td>NOP</td></tr><tr><td>0x91</td><td>XCHG EAX,ECX</td></tr><tr><td>0x92</td><td>XCHG EAX,EDX</td></tr><tr><td>0x93</td><td>XCHG EAX,EBX</td></tr><tr><td>0x94</td><td>XCHG EAX,ESP</td></tr><tr><td>0x95</td><td>XCHG EAX,EBP</td></tr><tr><td>0x96</td><td>XCHG EAX,ESI</td></tr><tr><td>0x97</td><td>XCHG EAX,EDI</td></tr></tbody></table><p>XCHG EAX,ERX</p></blockquote><hr><h2 id="经典定长指令-修改EIP"><a href="#经典定长指令-修改EIP" class="headerlink" title="经典定长指令_修改EIP"></a>经典定长指令_修改EIP</h2><h3 id="JCC"><a href="#JCC" class="headerlink" title="JCC"></a>JCC</h3><h4 id="0x70-0x7F"><a href="#0x70-0x7F" class="headerlink" title="0x70 - 0x7F"></a>0x70 - 0x7F</h4><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x70</td><td>JO</td></tr><tr><td>0x71</td><td>JNO</td></tr><tr><td>0x72</td><td>JB  JNAE  JC</td></tr><tr><td>0x73</td><td>JNB  JAE  JNC</td></tr><tr><td>0x74</td><td>JZ  JE</td></tr><tr><td>0x75</td><td>JNZ  JNE</td></tr><tr><td>0x76</td><td>JBE  JNA</td></tr><tr><td>0x77</td><td>JNBE  JA</td></tr><tr><td>0x78</td><td>JS</td></tr><tr><td>0x79</td><td>JNS</td></tr><tr><td>0x7A</td><td>JP  JPE</td></tr><tr><td>0x7B</td><td>JNP  JPO</td></tr><tr><td>0x7C</td><td>JL  JNGE</td></tr><tr><td>0x7D</td><td>JNL  JGE</td></tr><tr><td>0x7F</td><td>JNLE  JG</td></tr></tbody></table><p>&lt;1&gt; 条件跳转，后跟一个字节立即数的偏移(有符号)，共两个字节</p><p>&lt;2&gt; 如果条件成立，跳转到 当前指令地址 + 当前指令长度 +Ib</p><p>&lt;3&gt; 最大值：向前(⬇️)跳7F,向后跳(⬆️)80</p></blockquote><h4 id="0x0F-0x80-0x0F-0x8F"><a href="#0x0F-0x80-0x0F-0x8F" class="headerlink" title="0x0F 0x80 - 0x0F 0x8F"></a>0x0F 0x80 - 0x0F 0x8F</h4><blockquote><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x0F 0x80</td><td>JO</td></tr><tr><td>0x0F 0x81</td><td>JNO</td></tr><tr><td>0x0F 0x82</td><td>JB  JNAE  JC</td></tr><tr><td>0x0F 0x83</td><td>JNB  JAE  JNC</td></tr><tr><td>0x0F 0x84</td><td>JZ  JE</td></tr><tr><td>0x0F 0x85</td><td>JNZ  JNE</td></tr><tr><td>0x0F 0x86</td><td>JBE  JNA</td></tr><tr><td>0x0F 0x87</td><td>JNBE  JA</td></tr><tr><td>0x0F 0x88</td><td>JS</td></tr><tr><td>0x0F 0x89</td><td>JNS</td></tr><tr><td>0x0F 0x8A</td><td>JP  JPE</td></tr><tr><td>0x0F 0x8B</td><td>JNP  JPO</td></tr><tr><td>0x0F 0x8C</td><td>JL  JNGE</td></tr><tr><td>0x0F 0x8D</td><td>JNL  JGE</td></tr><tr><td>0x0F 0x8E</td><td>JLE  JNG</td></tr><tr><td>0x0F 0x8F</td><td>JNLE  JG</td></tr></tbody></table><p>&lt;1&gt; 条件跳转，后跟四个字节立即数的偏移(有符号)，共五个字节</p><p>&lt;2&gt; 如果条件成立，跳转到 当前指令地址 +当前指令长度 + Id</p><p>&lt;3&gt; 最大值：向前跳(⬇️)7FFFFFFF，向后跳(上)80000000</p></blockquote><hr><h4 id="其他指令"><a href="#其他指令" class="headerlink" title="其他指令"></a>其他指令</h4><blockquote><table><thead><tr><th>编码</th><th>指令</th><th>字节</th><th>说明</th></tr></thead><tbody><tr><td>0xE0</td><td>LOOPNE LOOPNZ Ib(Jb)</td><td>2</td><td>ECX = ECX -1. 当ZF = 0 &amp;&amp; ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td></tr><tr><td>0xE1</td><td>LOOPE LOOPNZ Ib(Jb)</td><td>2</td><td>ECX = ECX -1. 当ZF = 1 &amp;&amp; ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td></tr><tr><td>0xE2</td><td>LOOP Ib(Jb)</td><td>2</td><td>ECX = ECX -1. 当ECX != 0 时 跳转到 当前指令地址 + 当前指令长度 + Ib</td></tr><tr><td>0xE3</td><td>JrCXZ Ib(Jb)</td><td>2</td><td>当 ECX = 0 时跳转到 当前指令地址 + 当前指令长度 + Ib</td></tr><tr><td>0xE8</td><td>CALL Id(Jd)</td><td>5</td><td>CALL指令的下一条指令地址入栈后，跳转到 当前指令地址 + 当前指令长度 + Id</td></tr><tr><td>0xE9</td><td>JMP Id(Jd)</td><td>5</td><td>跳转到 当前指令地址 + 当前指令长度 + Id</td></tr></tbody></table><hr><p>8个段寄存器：ES CS SS DS FS GS LDTR TR (固定顺序)</p><table><thead><tr><th>编码</th><th>指令</th><th>字节</th><th>说明</th></tr></thead><tbody><tr><td>0xEA</td><td>JMP Ap(Ap: 六字节长度的直接地址)</td><td>7</td><td>JMP CS:Id  将Ap中的高2位赋值给CS，低4位直接赋值给EIP，即跳转</td></tr><tr><td>0xEB</td><td>JMP Ib(Jb)</td><td>1</td><td>跳转到 当前指令地址 + 当前指令长度 + Id</td></tr><tr><td>0xC3</td><td>RET</td><td>1</td><td>EIP出栈</td></tr><tr><td>0xC2</td><td>RET Iw</td><td>3</td><td>EIP出栈后，ESP = ESP + Iw</td></tr><tr><td>0xC8</td><td>RETF</td><td>1</td><td>出栈8个字节，低4个字节赋值给EIP，高4个字节中低2位赋值给CS</td></tr><tr><td>0xCA</td><td>RETF Iw</td><td>3</td><td>出栈8个字节，低4个字节赋值给EIP，高4个字节中低2位赋值给CS后，ESP = ESP + Iw</td></tr></tbody></table></blockquote><h2 id="经典变长指令-ModR-M"><a href="#经典变长指令-ModR-M" class="headerlink" title="经典变长指令_ModR/M"></a>经典变长指令_ModR/M</h2><h3 id="ModR-M"><a href="#ModR-M" class="headerlink" title="ModR/M"></a>ModR/M</h3><table><thead><tr><th>编码</th><th>指令</th></tr></thead><tbody><tr><td>0x88</td><td>MOV Eb,Gb</td></tr><tr><td>0x89</td><td>MOV Ev,Gv</td></tr><tr><td>0x8A</td><td>MOV Gb,Eb</td></tr><tr><td>ox8B</td><td>MOV Gv,Ev</td></tr></tbody></table><p>G: 通用寄存器</p><p>E: 寄存器/内存</p><p>b: 字节</p><p>v: Word, doubleword, quadword</p><hr><blockquote><p>ModR/M虽然只有一个字节，但是由三个部分组成</p></blockquote><p><img src="https://www.pediy.com/kssd/pediy10/75557/527384/19791.gif" srcset="/img/loading.gif" alt="https://www.pediy.com/kssd/pediy10/75557/527384/19791.gif"></p><hr><h3 id="Reg-Opcode"><a href="#Reg-Opcode" class="headerlink" title="Reg/Opcode"></a>Reg/Opcode</h3><p>Reg/Opcode(3,4,5位,共3个字节)描述指令中的G部分,即寄存器</p><table><thead><tr><th>寄存器宽度</th><th>000</th><th>001</th><th>010</th><th>011</th><th>100</th><th>101</th><th>110</th><th>111</th></tr></thead><tbody><tr><td>32</td><td>EAX</td><td>ECX</td><td>EDX</td><td>EBX</td><td>ESP</td><td>EBP</td><td>ESI</td><td>EDI</td></tr><tr><td>8</td><td>AL</td><td>CL</td><td>DL</td><td>BL</td><td>AH</td><td>CH</td><td>DH</td><td>BH</td></tr></tbody></table><hr><h3 id="Mod-R-M"><a href="#Mod-R-M" class="headerlink" title="Mod R/M"></a>Mod R/M</h3><blockquote><p>Mod(第6,7位) 和 R/M (第0,1,2位) 共同描述指令中的E部分,即寄存器/内存</p></blockquote><p>那么，这8个位具体是如何工作的呢,Inter操作手册给出了一张表</p><p>Table 2-2</p><p><img src="https://i.loli.net/2020/06/08/Pbqa7GVZORWeF3d.jpg" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/Pbqa7GVZORWeF3d.jpg"></p><p><a href="https://www.sandpile.org/x86/opc_rm.htm" target="_blank" rel="noopener">或者点击查看在线表格</a></p><h3 id="实验："><a href="#实验：" class="headerlink" title="实验："></a>实验：</h3><p>将编码 88 01</p><p>88 : MOV Eb,Gb</p><p>01: 0000 0001 拆分 </p><table><thead><tr><th>Mod</th><th>Reg/Opcode</th><th>R/m</th></tr></thead><tbody><tr><td>00</td><td>000</td><td>001</td></tr></tbody></table><p>那么 MOV Eb,Gb 中的Gb是什么呢？</p><p>b = 字节,G = 寄存器. 指8个位的寄存器，查Reg/Opcode的表(Reg/Opcode 对应 G)</p><p>Gb = AL. 现在 MOV Eb,AL. Eb代表什么</p><p>E = 寄存器/内存 继续查表 Mod + R/m 00001 得出 ECX</p><p>所以 编码 88 01 = MOV ECX,AL</p><h2 id="经典变长指令-Reg-Opcode"><a href="#经典变长指令-Reg-Opcode" class="headerlink" title="经典变长指令_Reg/Opcode"></a>经典变长指令_Reg/Opcode</h2><blockquote><p>我们知道 Reg/Opcode 用来标识寄存器 Mod 和 R/M 共同用来标识寄存器/内存</p><p>但是Reg/Opcode 不仅仅用来标识寄存器，有时候，用来标识opcode</p></blockquote><p>例如：Intel 白皮书Table A-2 中</p><p><img src="https://i.loli.net/2020/06/08/SPvfZckFEXrH8TL.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/SPvfZckFEXrH8TL.png"></p><p>80 81 82 83 这几个编码 并没有明确给出具体的指令是什么</p><blockquote><p>特别说明: 凡是出现Grp的，均参见 Table A-6</p><p>Grp后面小数字 1A: Bits 5, 4, and 3 of ModR/M byte used as an opcode extension (refer to Section A.4, “Opcode Extensions For One-Byte </p><p>And Two-byte Opcodes”).</p><p>第3 4 5位用来作为opcode的扩展</p><p>意思是 只要见到 1A Reg/Opcode就不代表通用寄存器了，而代表一个拓展的opcode</p><p>Grp 后面的数字 代表Table A-6 中的第几组</p></blockquote><p>Table A-6:</p><p><img src="https://i.loli.net/2020/06/08/IDOmhWrUJ8vkBYp.jpg" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/08/IDOmhWrUJ8vkBYp.jpg"></p><hr><h2 id="经典变长指令-SIB"><a href="#经典变长指令-SIB" class="headerlink" title="经典变长指令_SIB"></a>经典变长指令_SIB</h2><p>有没有SIB 由ModR/M决定</p><blockquote><p>当 Mod 为：00 01 10<br>R/M 为：100<br>的时候,后面跟的值 一定是SIB的值</p><p>Table 2-2 表中出现 [–][–]+disp  就是SIB</p></blockquote><p>ModR/M 后面的一个字节 表示的就是 SIB</p><p>SIB的组成结构：</p><p><img src="https://img-blog.csdn.net/20170824113427615?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQXBvbGxvbl9rcmo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" srcset="/img/loading.gif" alt="https://img-blog.csdn.net/20170824113427615?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQXBvbGxvbl9rcmo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"><br>$$<br>Base + Index*2^S<br>$$</p><blockquote><p>Scale描述2^Scanle 所以只能为 *1 *2 *4 *8</p></blockquote><p>Sib表格：Table 2-3</p><p><img src="https://i.loli.net/2020/06/09/SuWo3GTgI2ZYq48.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/09/SuWo3GTgI2ZYq48.png"></p><p>第一排 为 Base</p><p>SS 为 Sanle</p><p>Index 为 Index</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>x86</category>
+      
+      <category>硬编码</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>硬编码-前缀指令</title>
+    <link href="/2020/06/07/%E7%A1%AC%E7%BC%96%E7%A0%81-%E5%89%8D%E7%BC%80%E6%8C%87%E4%BB%A4/"/>
+    <url>/2020/06/07/%E7%A1%AC%E7%BC%96%E7%A0%81-%E5%89%8D%E7%BC%80%E6%8C%87%E4%BB%A4/</url>
+    
+    <content type="html"><![CDATA[<h1 id="前缀指令"><a href="#前缀指令" class="headerlink" title="前缀指令"></a>前缀指令</h1><p>怎么识别前缀指令？</p><p>根据指令的内容来决定是前缀还是opcode</p><hr><h2 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h2><blockquote><p>&lt;1&gt; LOCK 和 REPEAT前缀指令</p><table><thead><tr><th>种类</th><th>十六进制</th><th>说明</th></tr></thead><tbody><tr><td>LOCK</td><td>0xF0</td><td>为了让指令在执行时候先禁用数据线的复用这个特性用在多核的处理器上一般很少需要手动指定(锁地址总线)</td></tr><tr><td>REPNE/REPNZ</td><td>0xF2</td><td>当ECX!=0并且ZF==0时 重复执行后边的指令 每执行一次ECX的值减1</td></tr><tr><td>REP/REPZ</td><td>0xF3</td><td>当ECX!=0并且ZF==1时 重复执行后边的指令 每执行一次ECX的值减1</td></tr></tbody></table></blockquote><blockquote><p>&lt;2&gt; 段前缀指令</p><p>CS 0x2E</p><p>SS 0x36</p><p>DS 0x3E</p><p>ES 0x26</p><p>FS 0x64</p><p>GS 0x65</p></blockquote><blockquote><p>&lt;3&gt; 操作数宽度前缀指令</p><p>0x66</p></blockquote><blockquote><p>&lt;4&gt; 地址宽度前缀指令</p><p>0x67</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>x86</category>
+      
+      <category>硬编码</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>硬编码</title>
+    <link href="/2020/06/07/%E7%A1%AC%E7%BC%96%E7%A0%81/"/>
+    <url>/2020/06/07/%E7%A1%AC%E7%BC%96%E7%A0%81/</url>
+    
+    <content type="html"><![CDATA[<h1 id="硬编码"><a href="#硬编码" class="headerlink" title="硬编码"></a>硬编码</h1><p>硬编码有什么用？</p><p>病毒: shellcode</p><p>杀毒: 特征码</p><p>加密与破解: 指令壳 VMP</p><p>外挂作者: HOOK</p><p>反外挂作者: 提串</p><h2 id="x86-指令编码-硬编码-的结构"><a href="#x86-指令编码-硬编码-的结构" class="headerlink" title="x86 指令编码(硬编码)的结构"></a>x86 指令编码(硬编码)的结构</h2><p><img src="https://img-blog.csdn.net/20180814100907599?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Jvc3MxMjA2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" srcset="/img/loading.gif" alt="https://img-blog.csdn.net/20180814100907599?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Jvc3MxMjA2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"></p><p>X86指令由:</p><ul><li>前缀字节prefix (非必需)</li><li>操作码opcode (<font color="#B31F45">必须</font>)</li><li>内存/寄存器操作数字节ModR/M (非必需)</li><li>索引寻址描述字节SIB (非必需)</li><li>常数偏移字节/半字/字Displacement (非必需)</li><li>立即数字节/半字/字 Immediate (非必需)</li></ul><p><img src="http://c.biancheng.net/uploads/allimg/190528/4-1Z52QK010416.gif" srcset="/img/loading.gif" alt="http://c.biancheng.net/uploads/allimg/190528/4-1Z52QK010416.gif"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>x86</category>
+      
+      <category>硬编码</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>函数指针</title>
+    <link href="/2020/06/07/%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/"/>
+    <url>/2020/06/07/%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/</url>
+    
+    <content type="html"><![CDATA[<p>需要知识 PE 硬编码</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>指针数组与数组指针</title>
+    <link href="/2020/06/07/%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84%E4%B8%8E%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88/"/>
+    <url>/2020/06/07/%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84%E4%B8%8E%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88/</url>
+    
+    <content type="html"><![CDATA[<h1 id="指针数组"><a href="#指针数组" class="headerlink" title="指针数组"></a>指针数组</h1><h2 id="指针数组-定义"><a href="#指针数组-定义" class="headerlink" title="指针数组 定义"></a>指针数组 定义</h2><pre><code class="hljs cpp"><span class="hljs-keyword">char</span> arr[<span class="hljs-number">10</span>]; <span class="hljs-comment">//10 char</span><span class="hljs-keyword">char</span>* arr[<span class="hljs-number">10</span>];<span class="hljs-comment">//指针数组 10 指针(char *)</span>Point* arr[<span class="hljs-number">10</span>];<span class="hljs-keyword">int</span>******* arr[<span class="hljs-number">10</span>];</code></pre><h2 id="指针数组-赋值"><a href="#指针数组-赋值" class="headerlink" title="指针数组 赋值"></a>指针数组 赋值</h2><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* a = <span class="hljs-string">"Hello"</span>;<span class="hljs-keyword">char</span>* b = <span class="hljs-string">"指针数组"</span></code></pre><p>&lt;1&gt;:</p><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* arr[<span class="hljs-number">2</span>] = &#123;a,b&#125;;</code></pre><p>&lt;2&gt;:</p><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* arr[<span class="hljs-number">2</span>];arr[<span class="hljs-number">0</span>] = a;arr[<span class="hljs-number">1</span>] = b;</code></pre><p>&lt;3&gt;:</p><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* arr[<span class="hljs-number">2</span>] = &#123;<span class="hljs-string">"Hello"</span>,<span class="hljs-string">"指针数组"</span>&#125;;</code></pre><h2 id="结构体指针数组"><a href="#结构体指针数组" class="headerlink" title="结构体指针数组"></a>结构体指针数组</h2><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span></span><span class="hljs-class">&#123;</span><span class="hljs-keyword">int</span> x;<span class="hljs-keyword">int</span> y;&#125;;Point p;<span class="hljs-comment">//结构体宽度 8字节</span>Point arr[<span class="hljs-number">10</span>];<span class="hljs-comment">//普通数组 每一个成员都是一个结构体 8*10字节</span>Point* arrPoint[<span class="hljs-number">10</span>];<span class="hljs-comment">//指针数组 每一个成员都是一个指针 4*10字节</span></code></pre><p>指针数组就是数组，只不过里面存的是各种各样的指针而已。</p><h2 id="数组指针"><a href="#数组指针" class="headerlink" title="数组指针"></a>数组指针</h2><h3 id="数组指针-定义"><a href="#数组指针-定义" class="headerlink" title="数组指针 定义"></a>数组指针 定义</h3><pre><code class="hljs cpp"><span class="hljs-keyword">int</span>(*px1) [<span class="hljs-number">5</span>];<span class="hljs-comment">// 一维数组指针</span><span class="hljs-keyword">char</span>(*px2) [<span class="hljs-number">3</span>];<span class="hljs-keyword">int</span>(*px3)[<span class="hljs-number">2</span>][<span class="hljs-number">2</span>]; <span class="hljs-comment">//二维数组指针</span><span class="hljs-keyword">char</span>(*px4) [<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">3</span>];<span class="hljs-comment">//三维数组指针</span></code></pre><p>不管是几维，只要是指针，就得遵守指针的特性。</p><p>宽度永远是4</p><h3 id="数组指针-赋值"><a href="#数组指针-赋值" class="headerlink" title="数组指针 赋值"></a>数组指针 赋值</h3><pre><code class="hljs cpp">px1 = (<span class="hljs-keyword">int</span>(*)[<span class="hljs-number">5</span>])<span class="hljs-number">1</span>;px2 = (<span class="hljs-keyword">char</span>(*)[<span class="hljs-number">3</span>])<span class="hljs-number">2</span>;px3 = (<span class="hljs-keyword">int</span>(*)[<span class="hljs-number">2</span>][<span class="hljs-number">2</span>])<span class="hljs-number">3</span>;px4 = (<span class="hljs-keyword">char</span>(*)[<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">3</span>])<span class="hljs-number">4</span>;</code></pre><h3 id="数组指针-运算"><a href="#数组指针-运算" class="headerlink" title="数组指针 运算"></a>数组指针 运算</h3><pre><code class="hljs cpp"><span class="hljs-keyword">int</span>(*px1) [<span class="hljs-number">5</span>];<span class="hljs-comment">// 一维数组指针</span><span class="hljs-keyword">char</span>(*px2) [<span class="hljs-number">3</span>];<span class="hljs-keyword">int</span>(*px3)[<span class="hljs-number">2</span>][<span class="hljs-number">2</span>]; <span class="hljs-comment">//二维数组指针</span><span class="hljs-keyword">char</span>(*px4) [<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">3</span>];<span class="hljs-comment">//三维数组指针</span><span class="hljs-comment">//赋值</span>px1 = (<span class="hljs-keyword">int</span>(*)[<span class="hljs-number">5</span>])<span class="hljs-number">1</span>;px2 = (<span class="hljs-keyword">char</span>(*)[<span class="hljs-number">3</span>])<span class="hljs-number">1</span>;px3 = (<span class="hljs-keyword">int</span>(*)[<span class="hljs-number">2</span>][<span class="hljs-number">2</span>])<span class="hljs-number">1</span>;px4 = (<span class="hljs-keyword">char</span>(*)[<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">3</span>])<span class="hljs-number">1</span>;px1++;px2++;px3++;px4++;<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d %d %d %d /n"</span>,px1,px2,px3,px4);</code></pre><p>px1 ++ 后 int(<em>px1) [5] 去掉一个 \</em> 得到 int类型，5个int类型 = 5x4 =20 所以px1++完是21</p><p>px2同理。去掉*后 1x3，++完后是4</p><p>Px3 二维数组指针。去掉一个*后 4，2x2x4=16,++后是17 </p>]]></content>
+    
+    
+    <categories>
+      
+      <category>C++</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>指针</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>结构体指针</title>
+    <link href="/2020/06/06/%E7%BB%93%E6%9E%84%E4%BD%93%E6%8C%87%E9%92%88/"/>
+    <url>/2020/06/06/%E7%BB%93%E6%9E%84%E4%BD%93%E6%8C%87%E9%92%88/</url>
+    
+    <content type="html"><![CDATA[<h1 id="结构体指针"><a href="#结构体指针" class="headerlink" title="结构体指针"></a>结构体指针</h1><h2 id="结构体指针的特性"><a href="#结构体指针的特性" class="headerlink" title="结构体指针的特性"></a>结构体指针的特性</h2><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span></span><span class="hljs-class">&#123;</span><span class="hljs-keyword">int</span> x;<span class="hljs-keyword">int</span> y;&#125;<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><span class="hljs-function"></span>&#123;  Point p;  Point* px = &amp;p;    <span class="hljs-keyword">return</span>;&#125;</code></pre><h3 id="宽度"><a href="#宽度" class="headerlink" title="宽度"></a>宽度</h3><pre><code class="hljs cpp"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d"</span>,<span class="hljs-keyword">sizeof</span>(px))</code></pre><p>得到 4</p><p>符合指针类型的特性：宽度永远是4</p><h3 id=""><a href="#" class="headerlink" title="++"></a>++</h3><p>先打印出当前的地址：</p><pre><code class="hljs cpp"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"%x"</span>,px); <span class="hljs-comment">//#1</span>px++;<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%x"</span>,px); <span class="hljs-comment">//#2</span></code></pre><p>根据特性：带 * 类型的变量(指针类型)，++ 或 – 的数量是：去掉一个 * 后变量的宽度</p><p>所以 px++ 会加上 Point 的宽度</p><p>Point的宽度是：8</p><p>#1 输出：12ff78</p><p>#2 输出:   12ff80</p><p>px++ 刚好 + 8</p><h2 id="使用结构体指针"><a href="#使用结构体指针" class="headerlink" title="使用结构体指针"></a>使用结构体指针</h2> <pre><code class="hljs cpp"><span class="hljs-comment">//结构体赋值</span>Point p = &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>&#125;;<span class="hljs-comment">// 声明结构体指针</span>Point* px;<span class="hljs-comment">//为结构体指针赋值</span>px = &amp;p <span class="hljs-comment">//  Point* px = &amp;p;</span><span class="hljs-comment">//通过指针读取数据</span><span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d \n"</span>,px-&gt;x);<span class="hljs-comment">//通过指针修改数据</span>px-&gt;y = <span class="hljs-number">100</span>;</code></pre>]]></content>
+    
+    
+    <categories>
+      
+      <category>C++</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>指针</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>取值运算符</title>
+    <link href="/2020/06/06/%E5%8F%96%E5%80%BC%E8%BF%90%E7%AE%97%E7%AC%A6/"/>
+    <url>/2020/06/06/%E5%8F%96%E5%80%BC%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
+    
+    <content type="html"><![CDATA[<h1 id="取值运算符"><a href="#取值运算符" class="headerlink" title="取值运算符"></a>取值运算符</h1><h2 id="“-“的几种用途"><a href="#“-“的几种用途" class="headerlink" title="“*“的几种用途"></a>“<font color="#B31F45">*</font>“的几种用途</h2><h3 id="lt-1-gt-乘法运算符"><a href="#lt-1-gt-乘法运算符" class="headerlink" title="&lt;1&gt; 乘法运算符"></a>&lt;1&gt; 乘法运算符</h3><pre><code class="hljs c++"><span class="hljs-keyword">int</span> x = <span class="hljs-number">1</span>;<span class="hljs-keyword">int</span> y = <span class="hljs-number">2</span>;<span class="hljs-keyword">int</span> z = x*y;</code></pre><h3 id="lt-2-gt-定义指针类型"><a href="#lt-2-gt-定义指针类型" class="headerlink" title="&lt;2&gt; 定义指针类型"></a>&lt;2&gt; 定义指针类型</h3><pre><code class="hljs c++"><span class="hljs-keyword">char</span> x;<span class="hljs-keyword">char</span>* y;</code></pre><h3 id="lt-3-gt-取值运算符"><a href="#lt-3-gt-取值运算符" class="headerlink" title="&lt;3&gt;取值运算符"></a>&lt;3&gt;取值运算符</h3><p>* + 指针类型的变量</p><pre><code class="hljs c++"><span class="hljs-keyword">int</span> a = <span class="hljs-number">1</span>;<span class="hljs-keyword">int</span>* p = &amp;a;<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d"</span>,*p)</code></pre><p>此时 <font color="#B31F45">*</font>p 中的* 就是取值运算符。</p><h2 id="探测-指针类型-的类型"><a href="#探测-指针类型-的类型" class="headerlink" title="探测 *指针类型 的类型"></a>探测 *指针类型 的类型</h2><pre><code class="hljs c++"><span class="hljs-keyword">int</span>*** a;<span class="hljs-keyword">int</span>**** b;<span class="hljs-keyword">int</span>* c;<span class="hljs-comment">// *(a) = int**</span><span class="hljs-comment">// *(b) = int***</span><span class="hljs-comment">// *(c) = int</span></code></pre><h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>*加指针类型 的类型是 指针类型减去一个* (取出来的值的类型 = 原类型减去一个*)</p><h2 id="指针取值的两种方式"><a href="#指针取值的两种方式" class="headerlink" title="指针取值的两种方式"></a>指针取值的两种方式</h2><h3 id="p-0-和-p-0-可以相互转换"><a href="#p-0-和-p-0-可以相互转换" class="headerlink" title="*(p+0) 和 p[0]可以相互转换"></a>*(p+0) 和 p[0]可以相互转换</h3><p>*() 与 []</p><p>*(p+i) = p[i]</p><p>*(*(p+i)+k) = p[i][k]</p><p><em>(\</em>(*(p+i)+k)+m) = p[i][k][m]</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>C++</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>指针</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>配色</title>
+    <link href="/2020/06/04/%E9%85%8D%E8%89%B2/"/>
+    <url>/2020/06/04/%E9%85%8D%E8%89%B2/</url>
+    
+    <content type="html"><![CDATA[<p><font color="#B31F45">茉莉花红：#B31F45</font></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>配色</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>指针</title>
+    <link href="/2020/06/04/%E6%8C%87%E9%92%88/"/>
+    <url>/2020/06/04/%E6%8C%87%E9%92%88/</url>
+    
+    <content type="html"><![CDATA[<h1 id="指针类型"><a href="#指针类型" class="headerlink" title="指针类型"></a>指针类型</h1><h2 id="什么是指针类型？"><a href="#什么是指针类型？" class="headerlink" title="什么是指针类型？"></a>什么是指针类型？</h2><table><thead><tr><th>基本类型</th><th>指针类型</th></tr></thead><tbody><tr><td>char x;</td><td>chat* x;</td></tr><tr><td>short x;</td><td>short* x;</td></tr><tr><td>int x;</td><td>int* x;</td></tr><tr><td>float x;</td><td>float* x;</td></tr><tr><td>double x;</td><td>double* x;</td></tr><tr><td>Student x;</td><td>Student* x;</td></tr></tbody></table><h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ol><li>带有<font color="#B31F45">*</font>的变量类型的标准写法：变量类型<font color="#B31F45">*</font> 变量名</li><li>任何类型都可以带<font color="#B31F45">*</font>。加上<font color="#B31F45">*</font>以后是新的类型，统称“<font color="#B31F45">指针类型</font>”</li><li><font color="#B31F45">*</font>可以是多个</li><li>指针类型只是一个数据类型</li></ol><h2 id="指针类型-赋值"><a href="#指针类型-赋值" class="headerlink" title="指针类型 赋值"></a>指针类型 赋值</h2><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* x;short* y;<span class="hljs-keyword">int</span>* z;Student* s;x = (<span class="hljs-keyword">char</span>*)<span class="hljs-number">1</span>;y = (short*)<span class="hljs-number">2</span>;z = (<span class="hljs-keyword">int</span>*)<span class="hljs-number">3</span>;s = (Student*)<span class="hljs-number">4</span>;<span class="hljs-comment">//第二种</span><span class="hljs-keyword">char</span>*** x;short*** y;<span class="hljs-keyword">int</span>*** z;Student*** s;x = (<span class="hljs-keyword">char</span>***)<span class="hljs-number">1</span>;y = (short***)<span class="hljs-number">2</span>;z = (<span class="hljs-keyword">int</span>***)<span class="hljs-number">3</span>;s = (Student***)<span class="hljs-number">4</span>;</code></pre><h2 id="指针变量-宽度"><a href="#指针变量-宽度" class="headerlink" title="指针变量 宽度"></a>指针变量 宽度</h2><pre><code class="hljs cpp"><span class="hljs-keyword">char</span> x;short y;<span class="hljs-keyword">int</span> z;</code></pre><p>以上数据类型：char 1个字节，short 2个字节，int 4个字节。那么 指针类型的宽度是多少呢？</p><h3 id="实验："><a href="#实验：" class="headerlink" title="实验："></a>实验：</h3><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>* x;short* y;<span class="hljs-keyword">int</span>* z;x = (<span class="hljs-keyword">char</span>*)<span class="hljs-number">1</span>;y = (short*)<span class="hljs-number">2</span>;z = (<span class="hljs-keyword">int</span>*)<span class="hljs-number">3</span>;</code></pre><p>将以上代码运行后查看反汇编代码（可以多加几个*）</p><p><img src="https://i.loli.net/2020/06/05/ZUnlpbNDOkzyfvL.jpg" srcset="/img/loading.gif" alt="Xnip2020-06-05_22-08-01.jpg"></p><p>可以看到 dword</p><h3 id="总结：-1"><a href="#总结：-1" class="headerlink" title="总结："></a>总结：</h3><p>指针类型的变量宽度永远是4字节，无论类型是什么(char short int)，无论有几个*(char******)</p><h2 id="指针类型-自加和自减-–"><a href="#指针类型-自加和自减-–" class="headerlink" title="指针类型 自加和自减(++ / –)"></a>指针类型 自加和自减(++ / –)</h2><p>我们都知道，基本数据类型都可以自加或者自减，都是加1 或者减1。</p><p>指针类型也可以自加或自减</p><p>那么指针类型在 ++ 或者 – 的时候 和普通类型有什么区别呢？</p><h3 id="实验：-1"><a href="#实验：-1" class="headerlink" title="实验："></a>实验：</h3><pre><code class="hljs cpp"><span class="hljs-keyword">char</span>**** a;short**** b;<span class="hljs-keyword">int</span>**** c;a = (<span class="hljs-keyword">char</span>****)<span class="hljs-number">100</span>;b = (short****)<span class="hljs-number">100</span>;c = (<span class="hljs-keyword">int</span>****)<span class="hljs-number">100</span>;a++;b++;c++;<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d %d %d"</span>,a,b,c);</code></pre><p>输出的结果为：104 104 104</p><p>那么 结论：只要是指针类型，自增和自减都是4 对吗？</p><p>在*的数量在一个以上时，确实对。但是如果只有1个*呢？</p><p>输出的结果为：101 102 104</p><h3 id="总结：-2"><a href="#总结：-2" class="headerlink" title="总结："></a>总结：</h3><p>带 * 类型的变量(指针类型)，++ 或 – 的数量是：去掉一个 * 后变量的宽度</p><p>可以复制上面实验的代码，改成2个*和1个* 查看输出的结果</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>C++</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>指针</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>JCC</title>
+    <link href="/2020/06/02/JCC/"/>
+    <url>/2020/06/02/JCC/</url>
+    
+    <content type="html"><![CDATA[<h1 id="JCC表格"><a href="#JCC表格" class="headerlink" title="JCC表格"></a>JCC表格</h1><table><thead><tr><th>指令</th><th align="left">作用</th><th align="left">标志寄存器</th></tr></thead><tbody><tr><td>JE, JZ</td><td align="left">结果为零则跳转(相等时跳转)</td><td align="left">ZF=1</td></tr><tr><td>JNE, JNZ</td><td align="left">结果不为零则跳转(不相等时跳转)</td><td align="left">ZF=0</td></tr><tr><td>JS</td><td align="left">结果为负则跳转</td><td align="left">SF=1</td></tr><tr><td>JNS</td><td align="left">结果为非负则跳转</td><td align="left">SF=0</td></tr><tr><td>JP, JPE</td><td align="left">结果中1的个数为偶数则跳转</td><td align="left">PF=1</td></tr><tr><td>JNP, JPO</td><td align="left">结果中1的个数为偶数则跳转</td><td align="left">PF=0</td></tr><tr><td>JO</td><td align="left">结果溢出了则跳转</td><td align="left">OF=1</td></tr><tr><td>JNO</td><td align="left">结果没有溢出则跳转</td><td align="left">OF=0</td></tr><tr><td>JB, JNAE</td><td align="left">小于则跳转 (无符号数)</td><td align="left">CF=1</td></tr><tr><td>JNB, JAE</td><td align="left">大于等于则跳转 (无符号数)</td><td align="left">CF=0</td></tr><tr><td>JBE, JNA</td><td align="left">小于等于则跳转 (无符号数)</td><td align="left">CF=1 or ZF=1</td></tr><tr><td>JNBE, JA</td><td align="left">大于则跳转(无符号数)</td><td align="left">CF=0 and ZF=0</td></tr><tr><td>JL, JNGE</td><td align="left">小于则跳转 (有符号数)</td><td align="left">SF≠ OF</td></tr><tr><td>JNL, JGE</td><td align="left">大于等于则跳转 (有符号数)</td><td align="left">SF=OF</td></tr><tr><td>JLE, JNG</td><td align="left">小于等于则跳转 (有符号数)</td><td align="left">ZF=1 or SF≠ OF</td></tr><tr><td>JNLE, JG</td><td align="left">大于则跳转(有符号数)</td><td align="left">ZF=0 and SF=OF</td></tr></tbody></table><h1 id="标志寄存器"><a href="#标志寄存器" class="headerlink" title="标志寄存器"></a>标志寄存器</h1><h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.loli.net/2020/06/02/Kz5jeVR9NnqFWlI.jpg" srcset="/img/loading.gif" alt="Xnip2020-06-02_19-01-50.jpg"></h2><table><thead><tr><th>标志位（外语缩写）</th><th>标志位名称及外语全称</th><th>=1</th><th>=0</th></tr></thead><tbody><tr><td>CF</td><td>进位标志/Carry Flag</td><td>CY/Carry/进位</td><td>NC/No Carry/无进位</td></tr><tr><td>PF</td><td>奇偶标志/Parity Flag</td><td>PE/Parity Even/偶</td><td>PO/Parity Odd/奇</td></tr><tr><td>AF</td><td>辅助进位标志/Auxiliary Carry Flag</td><td>AC/Auxiliary Carry/进位</td><td>NA/No Auxiliary Carry/无进位</td></tr><tr><td>ZF</td><td>零标志/Zero Flag</td><td>ZR/Zero/等于零</td><td>NZ/Not Zero/不等于零</td></tr><tr><td>SF</td><td>符号标志/Sign Flag</td><td>NG/Negative/负</td><td>PL/Positive/非负</td></tr><tr><td>TF</td><td>跟踪标志/Trace Flag</td><td></td><td></td></tr><tr><td>IF</td><td>中断标志/Interrupt Flag</td><td>EI/Enable Interrupt/允许</td><td>DI/Disable Interrupt/禁止</td></tr><tr><td>DF</td><td>方向标志/Direction Flag</td><td>DN/Down/减少</td><td>UP/增加</td></tr><tr><td>OF</td><td>溢出标志/Overflow Flag</td><td>OV/Overflow/溢出</td><td>NV/Not Overflow/未溢出</td></tr></tbody></table><h3 id="CF-bit-0-Carry-flag"><a href="#CF-bit-0-Carry-flag" class="headerlink" title="CF (bit 0) [Carry flag]"></a>CF (bit 0) [Carry flag]</h3><p>   若算术操作产生的结果在最高有效位(most-significant bit)发生进位或借位则将其置1，反之清零。 </p><p>   这个标志通常用来指示无符号整型运算的溢出状态。</p><h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><pre><code class="hljs assembly">MOV AL,0xFEADD AL,2</code></pre><p>   或</p><pre><code class="hljs assembly">MOV AL,0x7FSUB AL,0xFF</code></pre><h3 id="PF-bit-2-Parity-flag"><a href="#PF-bit-2-Parity-flag" class="headerlink" title="PF (bit 2) [Parity flag]"></a>PF (bit 2) [Parity flag]</h3><p>如果结果的最低有效字节(least-significant byte)包含偶数个1位则该位置1，否则清零。</p><p>也叫奇偶校验位</p><p>利用PF可进行奇偶校验检查</p><h3 id="AF-bit-4-Adjust-flag"><a href="#AF-bit-4-Adjust-flag" class="headerlink" title="AF (bit 4) [Adjust flag]"></a>AF (bit 4) [Adjust flag]</h3><p>如果算术操作在结果的第3位发生进位或借位则将该标志置1，否则清零。这个标志在BCD(binary-code decimal)算术运算中被使用。</p><h3 id="ZF-bit-6-Zero-flag"><a href="#ZF-bit-6-Zero-flag" class="headerlink" title="ZF (bit 6) [Zero flag]"></a>ZF (bit 6) [Zero flag]</h3><p>若结果为0则将其置1，反之清零。</p><p>经常与CMP或者TEST等指令一起使用</p><p>例1:判断2个值是否相等</p><pre><code class="hljs assembly">MOV EAX,100MOV ECX,100CMP EAX,ECX</code></pre><p>(CMP指令相当于SUB指令，但是相减的结果并不保存到第一个操作数中)</p><p>例2:判断某个值是否为0</p><pre><code class="hljs assembly">TEST EAX,EAX</code></pre><p>(TEST指令相当于AND指令，但是与等结果并不保存到第一个操作数中)</p><h3 id="SF-bit-7-Sign-flag"><a href="#SF-bit-7-Sign-flag" class="headerlink" title="SF (bit 7) [Sign flag]"></a>SF (bit 7) [Sign flag]</h3><p>该标志被设置为有符号整型的最高有效位。(0指示结果为正，反之则为负)</p><h3 id="OF-bit-11-Overflow-flag"><a href="#OF-bit-11-Overflow-flag" class="headerlink" title="OF (bit 11) [Overflow flag]"></a>OF (bit 11) [Overflow flag]</h3><p>如果整型结果是较大的正数或较小的负数，并且无法匹配目的操作数时将该位置1，反之清零。</p><p>这个标志为带符号整型运算指示溢出状态。</p><p>溢出标志OF用于反映有符号数加减运算所得结果是否溢出</p><p>可以这样理解：</p><p>​    如果是无符号数运算，是否溢出看CF位</p><p>​    如果是有符号数运算，是否溢出看OF位</p><p>例子：</p><pre><code class="hljs assembly">MOV AL,0x7FADD AL,2</code></pre><h3 id="DF-bit10-Direction-flag"><a href="#DF-bit10-Direction-flag" class="headerlink" title="DF (bit10)[Direction flag]"></a>DF (bit10)[Direction flag]</h3><p>控制串指令(MOVS, CMPS, SCAS, LODS以及STOS)。设置DF标志使得串指令自动递减（从高地址向低地址方向处理字符串），清除该标志则使得串指令自动递增。STD以及CLD指令分别用于设置以及清除DF标志。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>x86</category>
+      
+      <category>指令</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JCC</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>原码反码补码</title>
+    <link href="/2020/06/01/%E5%8E%9F%E7%A0%81%E5%8F%8D%E7%A0%81%E8%A1%A5%E7%A0%81/"/>
+    <url>/2020/06/01/%E5%8E%9F%E7%A0%81%E5%8F%8D%E7%A0%81%E8%A1%A5%E7%A0%81/</url>
+    
+    <content type="html"><![CDATA[<h1 id="有符号数的编码规则"><a href="#有符号数的编码规则" class="headerlink" title="有符号数的编码规则"></a><a id="有符号数的编码规则">有符号数的编码规则</a></h1><p>原码：最高位为符号位置，其余各位为数值本身的绝对值</p><p>反码：</p><p>​    正数：反码与原码相同</p><p>​    负数：符号位为1，其余位对原码取反</p><p>补码：</p><p>​    正数：补码与原码相同</p><p>​    负数：符号位为1，其余位对原码取反加1</p><p>举例说明</p><p>//字节 8 Bit</p><p>1的原码： 0 0 0 0 0 0 0 1  (<em><strong>有符号数</strong> <font color=red>正数</font>第一位为0,<font color=red>负数</font>第一位为1，其余位为数值本身的绝对值</em>)。且反码和补码与原码相同</p><p>让我们看看在计算机中 1的字节储存形式</p><p><img src="https://i.loli.net/2020/06/01/9wqrCQ6DvEWbyRo.png" srcset="/img/loading.gif" alt="c++代码"></p><pre><code class="hljs c++"><span class="hljs-keyword">char</span> x = <span class="hljs-number">1</span>;<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%x\n"</span>, &amp;x);</code></pre><p>通过这段代码我们打印出 变量 <code>x</code> 的内存地址</p><p><img src="https://i.loli.net/2020/06/01/FoTpSYh2qe6mVrK.jpg" srcset="/img/loading.gif" alt="Xnip2020-06-01_20-23-04.jpeg"></p><p>查看内存 此内存地址存的是 01</p><p><img src="https://i.loli.net/2020/06/01/WfR9ASVTY47savC.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/01/WfR9ASVTY47savC.png"></p><p>01的二进制为 0000 0001 对应<code>char x</code></p><p>正数在内存中存的是原码</p><h3 id="再看看负数"><a href="#再看看负数" class="headerlink" title="再看看负数"></a>再看看负数</h3><p>//字节 8 Bit</p><p>-1    原码：1 0 0 0 0 0 0 1 (<em><strong>有符号数</strong> <font color=red>负数</font>第一位为1,<font color=red>正数</font>第一位为0，其余位为数值本身的绝对值</em>)</p><p>​        反码：1 1 1 1 1 1 1 0 <a href="#有符号数的编码规则">查看编码规则</a></p><p>​        补码： 1 1 1 1 1 1 1 1</p><p>实验：查看-1在内存中的存放</p><p>先把<code>char x = 1;</code> 改为 <code>char x = -1;</code></p><p><img src="https://i.loli.net/2020/06/01/B9ZopwXgMc3G1s6.jpg" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/01/B9ZopwXgMc3G1s6.jpg"></p><p>再进行查看：</p><p><img src="https://i.loli.net/2020/06/01/4TSYH1yUKXhWj29.png" srcset="/img/loading.gif" alt="https://i.loli.net/2020/06/01/4TSYH1yUKXhWj29.png"></p><p>FF 二进制：1111 1111  对应了补码</p><p>结论：</p><p>正数原码存储</p><p>负数补码存储</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>汇编</category>
+      
+      <category>x86</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>机器码</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>

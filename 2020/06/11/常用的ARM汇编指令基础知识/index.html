@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  <title>常用的ARM汇编指令基础知识 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-06-11 21:33" pubdate>
+        2020年6月11日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      60
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">常用的ARM汇编指令基础知识</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="ARM寄存器"><a href="#ARM寄存器" class="headerlink" title="ARM寄存器"></a>ARM寄存器</h1><h2 id="1-通用寄存器"><a href="#1-通用寄存器" class="headerlink" title="1.通用寄存器"></a>1.通用寄存器</h2><p>1）.未分组寄存器:R0~R7<br>2）.分组寄存器:R8~812<br>R13:SP，常用作堆栈指针，始终指向堆栈的顶部，当一个数据(32位)推入堆栈时，SP(R13的值减4)向下浮动指向下一个地址，即新的栈顶，当数据从堆栈中弹出时，SP(R13的值加4)向上浮动指向新的栈顶。<br>R14:连接寄存器(LR),当执行BL子程序调用指令时，R14中得到R15(程序计数器PC)的备份，其他情况下，R14用作通用寄存器。</p>
+<p><strong>R15:程序计数器(PC):用于控制程序中指令的执行顺序。正常运行时，PC指向CPU运行的下一条指令。每次取值后PC的值会自动修改以指向下一条指令，从而保证了指令按一定的顺序执行。当程序的执行顺序发生改变(如转移)时，需要修改PC的值。</strong></p>
+<h2 id="2-状态寄存器"><a href="#2-状态寄存器" class="headerlink" title="2.状态寄存器"></a>2.状态寄存器</h2><p>CPSR(R16):当前程序状态寄存器，用来保存ALU中的当前操作信息，控制允许和禁止中断、设置处理器的工作模式等。<br>SPSRs:五个备份的程序状态寄存器，用来进行异常处理。当异常发生时，SPSR用于保存CPSR的当前值，从异常退出时可由SPSR来恢复CPSR。<br>img<br>N、Z、C、V均为条件码标志位，他们的内容可被运算的结果所改变。<br>N:正负标志，N=1表示运算的结果为负，N=0表示运算的结果为正或0<br>Z:零标志，Z=1表示运算的结果为0，Z=0表示运算的结果为非0<br>C:进位标志，加法运算产生了进位时则C=1，否则C=0<br> 借位标志，减肥运算产生了借位则C=0，否则C=1</p>
+<p><strong>V:溢出标志，V=1表示有溢出，V=0表示无溢出</strong></p>
+<h2 id="3-地址空间"><a href="#3-地址空间" class="headerlink" title="3.地址空间"></a>3.地址空间</h2><p><strong>程序正常执行时，每执行一条ARM指令，当前指令计数器增加4个字节</strong></p>
+<h1 id="汇编知识"><a href="#汇编知识" class="headerlink" title="汇编知识"></a>汇编知识</h1><h2 id="1-汇编指令格式"><a href="#1-汇编指令格式" class="headerlink" title="1.汇编指令格式"></a><strong>1.汇编指令格式</strong></h2><p>&lt;opcode&gt;{&lt;cond&gt;}{S}&lt;Rd&gt;,&lt;Rn&gt;{,&lt;OP2&gt;}<br>格式中&lt;&gt;的内容必不可少，{}中的内容可省略<br>&lt;opcode&gt;:表示操作码，如ADD表示算术加法<br>{&lt;cond&gt;}:表示指令执行的条件域，如EQ、NE等。<br>{S}:决定指令的执行结果是否影响CPSR的值，使用该后缀则指令执行的结果影响CPSR的值，否则不影响<br>&lt;Rd&gt;:表示目的寄存器<br>&lt;Rn&gt;:表示第一个操作数，为寄存器<br>&lt;op2&gt;:表示第二个操作数，可以是立即数、寄存器或寄存器移位操作数</p>
+<p><strong>例子：ADDEQS R0,R1,#8;其中操作码为ADD,条件域cond为EQ,S表示该指令的执行影响CPSR寄存器的值，目的寄存器Rd为R0,第一个操作数寄存器Rd为R1，第二个操作数OP2为立即数#8</strong></p>
+<h2 id="2-指令的可选后缀"><a href="#2-指令的可选后缀" class="headerlink" title="2.指令的可选后缀"></a>2.指令的可选后缀</h2><p>S：指令执行后程序状态寄存器的条件标志位将被刷新<br>  ADDS R1,R0,#2<br>!:指令中的地址表达式中含有!后缀时，指令执行后，基址寄存器中的地址值将发生变化，变化的结果是：基址寄存器中的值(指令执行后)=指令执行前的值 + 地址偏移量</p>
+<p>  <strong>LDR R3,[R0,#2]!   指令执行后，R0 = R0 + 2</strong></p>
+<h2 id="3-指令的条件执行"><a href="#3-指令的条件执行" class="headerlink" title="3.指令的条件执行"></a>3.指令的条件执行</h2><p>指令的条件后缀只是影响指令是否执行，不影响指令的内容</p>
+<table>
+<thead>
+<tr>
+<th>条件码</th>
+<th>助记符后缀</th>
+<th>标志</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0000</td>
+<td>EQ</td>
+<td>Z置位</td>
+<td>相等</td>
+</tr>
+<tr>
+<td>0001</td>
+<td>NE</td>
+<td>Z清零</td>
+<td>不相等</td>
+</tr>
+<tr>
+<td>0010</td>
+<td>CS</td>
+<td>C指令</td>
+<td>无符号数大于或等于</td>
+</tr>
+<tr>
+<td>0011</td>
+<td>CC</td>
+<td>C清零</td>
+<td>无符号数小于</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>MI</td>
+<td>N置位</td>
+<td>负数</td>
+</tr>
+<tr>
+<td>0101</td>
+<td>PL</td>
+<td>N清零</td>
+<td>正数或零</td>
+</tr>
+<tr>
+<td>0110</td>
+<td>VS</td>
+<td>V置位</td>
+<td>溢出</td>
+</tr>
+<tr>
+<td>0111</td>
+<td>VC</td>
+<td>V清零</td>
+<td>未溢出</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>HI</td>
+<td>C置位Z清零</td>
+<td>无符号数大于</td>
+</tr>
+<tr>
+<td>1001</td>
+<td>LS</td>
+<td>C清零Z置位</td>
+<td>无符号数小于或等于</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>GE</td>
+<td>N等于V</td>
+<td>带符号数大于或等于</td>
+</tr>
+<tr>
+<td>1011</td>
+<td>LT</td>
+<td>N不等于V</td>
+<td>带符号数小于</td>
+</tr>
+<tr>
+<td>1100</td>
+<td>GT</td>
+<td>Z清零且(N等于V)</td>
+<td>带符号数大于</td>
+</tr>
+<tr>
+<td>1101</td>
+<td>LE</td>
+<td>Z置位或(N不等于V)</td>
+<td>带符号数小于或等于</td>
+</tr>
+<tr>
+<td>1110</td>
+<td>AL</td>
+<td>忽略</td>
+<td>无条件执行</td>
+</tr>
+</tbody></table>
+<p><strong>例子：ADDEQ R4,R3,#1 相等则相加，即CPSR中Z置位时该指令执行，否则不执行。</strong></p>
+<h2 id="4-ARM指令分类"><a href="#4-ARM指令分类" class="headerlink" title="4.ARM指令分类"></a>4.ARM指令分类</h2><table>
+<thead>
+<tr>
+<th>助记符</th>
+<th>指令功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MRC</td>
+<td>从协处理器寄存器到ARM寄存器的数据传输指令</td>
+</tr>
+<tr>
+<td>MRS</td>
+<td>传送CPSR或SPSR的内容到通用寄存器指令</td>
+</tr>
+<tr>
+<td>MSR</td>
+<td>传送通用寄存器到CPSR或SPSR的指令</td>
+</tr>
+<tr>
+<td>MUL</td>
+<td>32位乘法指令</td>
+</tr>
+<tr>
+<td>MLA</td>
+<td>32位乘加指令</td>
+</tr>
+<tr>
+<td>MVN</td>
+<td>数据取反传送指令</td>
+</tr>
+<tr>
+<td>ORR</td>
+<td>逻辑或指令</td>
+</tr>
+<tr>
+<td>RSB</td>
+<td>逆向减法指令</td>
+</tr>
+<tr>
+<td>RSC</td>
+<td>带错位的逆向减法指令</td>
+</tr>
+<tr>
+<td>SBC</td>
+<td>带错位减法指令</td>
+</tr>
+<tr>
+<td>STC</td>
+<td>协处理器寄存器写入存储器指令</td>
+</tr>
+<tr>
+<td>STM</td>
+<td>批量内存字写入指令</td>
+</tr>
+<tr>
+<td>STR</td>
+<td>寄存器到存储器的数据存储指令</td>
+</tr>
+<tr>
+<td>SUB</td>
+<td>减法指令</td>
+</tr>
+<tr>
+<td>SWI</td>
+<td>软件中断指令</td>
+</tr>
+<tr>
+<td>TEQ</td>
+<td>相等测试指令</td>
+</tr>
+<tr>
+<td>TST</td>
+<td>位测试指令</td>
+</tr>
+</tbody></table>
+<h2 id="5-ARM寻址方式"><a href="#5-ARM寻址方式" class="headerlink" title="5.ARM寻址方式"></a>5.ARM寻址方式</h2><p><strong>寻址方式就是根据指令中操作数的信息来寻找操作数实际物理地址的方式</strong></p>
+<h3 id="1）立即数寻址"><a href="#1）立即数寻址" class="headerlink" title="1）立即数寻址"></a>1）立即数寻址</h3><p><strong>MOV R0,#15    #15就是立即数</strong></p>
+<h3 id="2）寄存器寻址"><a href="#2）寄存器寻址" class="headerlink" title="2）寄存器寻址"></a>2）寄存器寻址</h3><p><strong>ADD R0, R1, R2   将R1和R2的内容相加，其结果存放在寄存器R0中</strong></p>
+<h3 id="3）寄存器间接寻址"><a href="#3）寄存器间接寻址" class="headerlink" title="3）寄存器间接寻址"></a>3）寄存器间接寻址</h3><p><strong>LDR R0, [R4]    以寄存器R4的值作为操作数的地址，在存储器中取得一个操作数存入寄存器R0中</strong></p>
+<h3 id="4）寄存器移位寻址"><a href="#4）寄存器移位寻址" class="headerlink" title="4）寄存器移位寻址"></a>4）寄存器移位寻址</h3><p>ADD R0,R1,R2,LSL #1   将R2的值左移一位，所得值与R1相加，存放到R0中</p>
+<p><strong>MOV R0,R1,LSL R3   将R1的值左移R3位，然后将结果存放到R0中</strong></p>
+<h3 id="5）基址变址寻址"><a href="#5）基址变址寻址" class="headerlink" title="5）基址变址寻址"></a>5）基址变址寻址</h3><p>LDR R0,[R1,#4]   将R1的值加4作为操作数的地址，在存储器中取得操作数放入R0中<br>LDR R0,[R1,#4]!  将R1的值加4作为操作数的地址，在存储器中取得操作数放入R0中,然后R1 = R1+4<br>LDR R0,[R1],#4   R0 = [R1],R1 = R1 +4</p>
+<p><strong>LDR R0,[R1,R2]  R0 = [R1+R2]</strong></p>
+<h3 id="6）-多寄存器寻址"><a href="#6）-多寄存器寻址" class="headerlink" title="6）.多寄存器寻址"></a>6）.多寄存器寻址</h3><p>一条指令可以完成多个寄存器值的传送(最多可传送16个通用寄存器)，连续的寄存器用“-”，否则用“，”<br>LDMIA R0!,{R1 - R4}  R1 = [R0],R2=[R0+4],R3=[R0+8],R4=[R0+12]</p>
+<p><strong>后缀IA表示在每次执行玩加载/存储操作后，R0按自长度增加。</strong></p>
+<h3 id="7）-相对寻址"><a href="#7）-相对寻址" class="headerlink" title="7）.相对寻址"></a>7）.相对寻址</h3><p>以程序计数器PC的当前值为基地址，指令中的地址标号作为偏移量，将两者相加之后得到操作数的有效地址，如下图的BL分支跳转<br>   BL proc     跳转到子程序proc处执行<br>   …<br>proc MOV R0,#1</p>
+<p>   <strong>…</strong></p>
+<h3 id="8）-堆栈寻址"><a href="#8）-堆栈寻址" class="headerlink" title="8）.堆栈寻址"></a>8）.堆栈寻址</h3><p>按先进先出的方式工作，堆栈指针用R13表示，总是指向栈顶，LDMFD和STMFD分别表示POP出栈和PUSH进栈<br>STMFD R13!,{R0 - R4};</p>
+<p><strong>LDMFD R13!,{R0 - R4};</strong></p>
+<h2 id="6-数据处理指令"><a href="#6-数据处理指令" class="headerlink" title="6.数据处理指令"></a><strong>6.数据处理指令</strong></h2><h3 id="1）-MOV指令"><a href="#1）-MOV指令" class="headerlink" title="1）. MOV指令"></a><strong>1）. MOV指令</strong></h3><p>MOV {&lt;cond&gt;}{S} Rd,op2      将op2传给Rd<br>MOV R1, R0      将寄存器R0的值传到寄存器R1<br>MOV PC,R14      将寄存器R14的值传到PC，常用于子程序返回<br>MOV R1,R0,LSL #3   将寄存器R0的值左移3位后传给R1</p>
+<p><strong>MOV R0,#5      将立即数5传给R0</strong></p>
+<h3 id="2）-MVN指令"><a href="#2）-MVN指令" class="headerlink" title="2）. MVN指令"></a>2）. MVN指令</h3><p>MVN {&lt;\cond&gt;}{S}Rd, op2      将op2取反传给Rd<br>MVN R0,#0      将0取反后传给R0，R0 = -1</p>
+<p><strong>MVN R1,R2      将R2取反，结果保存到R1</strong></p>
+<h3 id="3）-移位指令"><a href="#3）-移位指令" class="headerlink" title="3）. 移位指令"></a>3）. 移位指令</h3><p>LSL 逻辑左移<br>LSR 逻辑右移<br>ASR 算术右移<br>ROR 循环右移</p>
+<p><strong>RRX 带扩展的循环右移</strong></p>
+<h3 id="4）-ADD加法指令"><a href="#4）-ADD加法指令" class="headerlink" title="4）. ADD加法指令"></a>4）. ADD加法指令</h3><p>ADD{&lt;cond&gt;}{S}Rd, Rn, op2<br>ADD R0,R1,R2       R0 = R1 + R2<br>ADD R0,R1,#5       R0 = R1 + 5</p>
+<p><strong>ADD R0,R1,R2,LSL #2   R0 = R1 + (R2左移2位)</strong></p>
+<h2 id="5）-ADC带进位加法指令"><a href="#5）-ADC带进位加法指令" class="headerlink" title="5）. ADC带进位加法指令"></a>5）. ADC带进位加法指令</h2><p>ADC{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和操作数op2相加，再加上CPSR中C条件标志位的值，并将结果保存到Rd中<br>例：用ADC完成64位加法，设第一个64位操作数保存在R2,R3中，第二个64位操作数放在R4,R5中，结果保存在R0,R1中<br>ADDS R0,R2,R4    低32位相加，产生进位</p>
+<p><strong>ADC R1,R3,R5     高32位相加，加上进位</strong></p>
+<h3 id="6）-SUB减法指令"><a href="#6）-SUB减法指令" class="headerlink" title="6）. SUB减法指令"></a>6）. SUB减法指令</h3><p>SUB{&lt;cond&gt;}{S} Rd,Rn,op2   Rd = Rn - op2<br>SUB R0,R1,R2       R0 = R1 - R2<br>SUB R0,R1,#6       R0 = R1 -6</p>
+<p><strong>SUB R0,R2,R3,LSL #1   R0 = R2 - (R3左移1位)</strong></p>
+<h3 id="7）-SBC带借位减法指令"><a href="#7）-SBC带借位减法指令" class="headerlink" title="7）. SBC带借位减法指令"></a>7）. SBC带借位减法指令</h3><p>SBC{&lt;cond&gt;}{S} Rd,Rn,op2   把Rn的值减去操作数op2，再减去CPSR中的C标志位的反码，并将结果保存到Rd中，Rd = Rn - op2 - !C<br>例:用SBC完成64位减法，设第一个64位操作数保存在R2,R3中，第二个64位操作数放在R4,R5中，结果保存在R0,R1中<br>SUBS R0,R2,R4    低32位相减，S影响CPSR</p>
+<p><strong>SBC R1,R3,R5     高32位相减，去除C的反码</strong></p>
+<h3 id="8）-RSC带借位的逆向减法指令"><a href="#8）-RSC带借位的逆向减法指令" class="headerlink" title="8）. RSC带借位的逆向减法指令"></a>8）. RSC带借位的逆向减法指令</h3><p><strong>RSC{&lt;cond&gt;}{S} Rd,Rn,op2   把操作数op2减去Rn，再减去CPSR中的C标志位的反码，并将结果保存到Rd中，Rd = op2 - Rn - !C</strong></p>
+<h3 id="9）-逻辑运算指令"><a href="#9）-逻辑运算指令" class="headerlink" title="9）. 逻辑运算指令"></a>9）. 逻辑运算指令</h3><p>AND{&lt;cond&gt;}{S} Rd,Rn,op2   按位与，Rd = Rn AND op2<br>ORR{&lt;cond&gt;}{S} Rd,Rn,op2   按位或，Rd = Rn OR op2</p>
+<p><strong>EOR{&lt;cond&gt;}{S} Rd,Rn,op2   按位异或，Rd = Rn EOR op2</strong></p>
+<h3 id="10）-CMP比较指令"><a href="#10）-CMP比较指令" class="headerlink" title="10）. CMP比较指令"></a>10）. CMP比较指令</h3><p>CMP{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和op2进行比较，同时更新CPSR中条件标志位的值(实际上是执行一次减法，但不存储结果)，当操作数Rn大于op2时，则此后带有GT后缀的指令将可以执行(根据相应的指令判断是否执行，如GT,LT等)。<br>CMP R1,#10          比较R1和10，并设置CPSR的标志位</p>
+<p><strong>ADDGT R0,R0,#5        如果R1&gt;10,则执行ADDGT指令，将R0加5</strong></p>
+<h3 id="11）-CMN反值比较指令"><a href="#11）-CMN反值比较指令" class="headerlink" title="11）. CMN反值比较指令"></a>11）. CMN反值比较指令</h3><p>CMN{&lt;cond&gt;}{S} Rd,Rn,op2   将Rn的值和op2取反后进行比较，同时更新CPSR中条件标志位的值(实际上将Rn和op2相加)，后面的指令就可以根据条件标志位决定是否执行。  </p>
+<p><strong>CMN R0,R1    将R0和R1相加，并设置CPSR的值</strong></p>
+<h3 id="12）-MUL-MLA-SMULL-SMLAL-UMULL-UMLAL乘法指令"><a href="#12）-MUL-MLA-SMULL-SMLAL-UMULL-UMLAL乘法指令" class="headerlink" title="12）. MUL/MLA/SMULL/SMLAL/UMULL/UMLAL乘法指令"></a>12）. MUL/MLA/SMULL/SMLAL/UMULL/UMLAL乘法指令</h3><p>MUL   32位乘法指令<br>MLA   32位乘加指令<br>SMULL  64位有符号数乘法指令<br>SMLAL  64位有符号数乘加指令<br>UMULL  64位无符号数乘法指令<br>UMLAL  64位无符号数乘加指令<br>MUL{&lt;cond&gt;}{S} Rd,Rm,Rs     Rd = Rm * Rs<br>MULS R0,R1,R2<br>MLA{&lt;cond&gt;}{S} Rd,Rm,Rs,Rn    Rd = (Rm * Rs) + Rn</p>
+<p><strong>MLAS R0,R1,R2,R3</strong></p>
+<h2 id="7-数据加载与存储指令"><a href="#7-数据加载与存储指令" class="headerlink" title="7.数据加载与存储指令"></a>7.数据加载与存储指令</h2><table>
+<thead>
+<tr>
+<th>助记符</th>
+<th>说明</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LDR{}Rd，addr</td>
+<td>加载字数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRB{}Rd，addr</td>
+<td>加载无符号字节数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRT{}Rd，addr</td>
+<td>以用户模式加载字数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRBT{}Rd，addr</td>
+<td>以用户模式加载无符号字节数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRH{}Rd，addr</td>
+<td>加载无符号半字数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRSB{}Rd，addr</td>
+<td>加载有符号字节数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>LDRSH{}Rd，addr</td>
+<td>加载有符号半字数据</td>
+<td>Rd = [addr]</td>
+</tr>
+<tr>
+<td>STR{}Rd，addr</td>
+<td>存储字数据</td>
+<td>[addr] = Rd</td>
+</tr>
+<tr>
+<td>STRB{}Rd，addr</td>
+<td>存储字节数据</td>
+<td>[addr] = Rd</td>
+</tr>
+<tr>
+<td>STRT{}Rd，addr</td>
+<td>以用户模式存储字数据</td>
+<td>[addr] = Rd</td>
+</tr>
+<tr>
+<td>STRBT{}Rd，addr</td>
+<td>以用户模式存储字节数据</td>
+<td>[addr] = Rd</td>
+</tr>
+<tr>
+<td>STRH{}Rd，addr</td>
+<td>存储半字数据</td>
+<td>[addr] = Rd</td>
+</tr>
+<tr>
+<td>LDM{}{type}Rn{!}，regs</td>
+<td>多寄存器加载</td>
+<td>reglist = [Rn...]</td>
+</tr>
+<tr>
+<td>STM{}{type}Rn{!}，regs</td>
+<td>多寄存器存储</td>
+<td>[Rn...] = reglist</td>
+</tr>
+<tr>
+<td>SWP{}Rd,Rm,[Rn]</td>
+<td>寄存器和存储器字数据交换</td>
+<td>Rd=[Rn],[Rn]=Rm(Rn!=Rd或Rm)</td>
+</tr>
+<tr>
+<td>SWP{}B Rd,Rm,[Rn]</td>
+<td>寄存器和存储器字节数据交换</td>
+<td>Rd = [Rn],[Rn] = Rm(Rn!=Rd或Rm)</td>
+</tr>
+</tbody></table>
+<h3 id="1）-LDR-STR字数据加载-存储指令"><a href="#1）-LDR-STR字数据加载-存储指令" class="headerlink" title="1）. LDR/STR字数据加载/存储指令"></a>1）. LDR/STR字数据加载/存储指令</h3><p>LDR/STR{&lt;cond&gt;}{T}Rd,addr    LDR指令用于从存储器中将一个32位的字数据加载到目的寄存器Rd中，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。<br>STR指令用于从源寄存器中将一个32位的字数据存储到存储器中，和LDR相反。后缀T可选。<br>LDR R4,START       将存储地址为START的字数据读入R4<br>STR R5,DATA1       将R5存入存储地址为DATA1中<br>LDR R0,[R1]       将存储器地址为R1的字数据读入存储器R0<br>LDR R0,[R1,R2]      将存储器地址为R1+R2的字数据读入存储器R0<br>LDR R0,[R1,#8]      将存储器地址为R1+8的字数据读入存储器R0<br>LDR R0,[R1,R2,LSL #2]  将存储器地址为R1+R2<em>4的字数据读入存储区R0<br>STR R0,[R1,R2]!     将R0字数据存入存储器地址R1+R2的存储单元中，并将新地址R2+R2写入R2<br>STR R0,[R1,#8]!     将R0字数据存入存储器地址R1+8的存储单元中，并将新地址R2+8写入R2<br>STR R0,[R1,R2,LSL #2]  将R0字数据存入存储器地址R1+R2</em>4的存储单元中，并将新地址R2+R2*4写入R1<br>LDR R0,[R1],#8      将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+8写入R1<br>LDR R0,[R1],R2      将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+R2写入R1</p>
+<p><strong>LDR R0,[R1],R2,LSL #2  将存储器地址为R1的字数据读入寄存器R0，并将新地址R1+R2*4写入R1</strong></p>
+<h3 id="2）-LDRB-STRB字节数据加载-存储指令"><a href="#2）-LDRB-STRB字节数据加载-存储指令" class="headerlink" title="2）. LDRB/STRB字节数据加载/存储指令"></a>2）. LDRB/STRB字节数据加载/存储指令</h3><p><strong>LDRB/STRB{&lt;cond&gt;}{T}Rd,addr     LDRB指令用于从存储器中将一个8位的字节数据加载到目的寄存器中，同时将寄存器的高24位清零，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。</strong></p>
+<p><strong>STRB指令用于从源寄存器中将一个8位的字节数据存储到存储器中，和LDRB相反。后缀T可选。</strong></p>
+<h3 id="3）-LDRH-STRH半字数据加载-存储指令"><a href="#3）-LDRH-STRH半字数据加载-存储指令" class="headerlink" title="3）. LDRH/STRH半字数据加载/存储指令"></a>3）. LDRH/STRH半字数据加载/存储指令</h3><p><strong>LDRH/STRH{&lt;cond&gt;}{T}Rd,addr     LDRH指令用于从存储器中将一个16位的半字数据加载到目的寄存器中，同时将寄存器的高16位清零，当程序计数器PC作为目的寄存器时，指令从存储器中读取的字数据被当做目的地址，从而可以实现程序流程的跳转。</strong></p>
+<h3 id="4）-LDM-STM批量数据加载-存储指令"><a href="#4）-LDM-STM批量数据加载-存储指令" class="headerlink" title="4）. LDM/STM批量数据加载/存储指令"></a>4）. LDM/STM批量数据加载/存储指令</h3><p><strong>LDM/STM{&lt;cond&gt;}{&lt;type&gt;}Rn{!},&lt;regs&gt;{^}    LDM用于从基址寄存器所指示的一片连续存储器中读取数据到寄存器列表所指向的多个寄存器中，内存单元的起始地址为基址寄存器Rn的值，各个寄存器由寄存器列表regs表示，该指令一般用于多个寄存器数据的出栈操作</strong></p>
+<p><strong>STM用于将寄存器列表所指向的多个寄存器中的值存入由基址寄存器所指向的一片连续存储器中，内存单元的起始地址为基址寄存器Rn的值，各个寄存器又寄存器列表regs表示。该指令一般用于多个寄存器数据的进栈操作。</strong></p>
+<p>type表示类型，用于数据的存储与读取有以下几种情况：<br>IA：每次传送后地址值加。<br>IB：每次传送前地址值加。<br>DA:每次传送后地址值减。<br>DB:每次传送前地址值减。<br>用于堆栈操作时有如下几种情况：<br>FD:满递减堆栈<br>ED:空递减堆栈<br>FA:满递增堆栈</p>
+<p><strong>EA:空递增堆栈</strong></p>
+<h2 id="5）-SWP字数据交换指令"><a href="#5）-SWP字数据交换指令" class="headerlink" title="5）. SWP字数据交换指令"></a>5）. SWP字数据交换指令</h2><p>SWP{&lt;cond&gt;}&lt;Rd&gt;,&lt;Rm&gt;,[&lt;Rn&gt;]     Rd = [Rn],[Rn] = Rm,当寄存器Rm和目的寄存器Rd为同一个寄存器时，指令交换该急促亲和存储器的内容<br>SWP R0,R1,[R2]      R0 = [R2],[R2] = R1<br>SWP R0,R0,[R1]      R0 = [R1],[R1] = R0</p>
+<p><strong>SWPB指令用于将寄存器Rn指向的存储器中的字节数据加载到目的寄存器Rd中，目的寄存器的高24位清零，同时将Rm中的字数据存储到Rn指向的存储器中。</strong></p>
+<h2 id="8-分支语句"><a href="#8-分支语句" class="headerlink" title="8.分支语句"></a>8.分支语句</h2><table>
+<thead>
+<tr>
+<th>助记符</th>
+<th>说明</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B{cond}label</td>
+<td>分支指令</td>
+<td>PC&lt;-label</td>
+</tr>
+<tr>
+<td>BL{cond}label</td>
+<td>带返回的分支指令</td>
+<td>PC&lt;-label，LR=BL后面的第一条指令地址</td>
+</tr>
+<tr>
+<td>BX{cond}Rm</td>
+<td>带状态切换的分支指令</td>
+<td>PC = Rm &amp; 0xffffffe，T=Rm[0] &amp; 1</td>
+</tr>
+<tr>
+<td>BLX{cond}label Rm</td>
+<td>带返回和状态切换的分支指令</td>
+<td>PC=label，T=1 PC； PC = Rm &amp;0xffffffe，T=Rm[0] &amp; 1；LR = BLX后面的第一条指令地址</td>
+</tr>
+</tbody></table>
+<h3 id="1）-分支指令B"><a href="#1）-分支指令B" class="headerlink" title="1）. 分支指令B"></a>1）. 分支指令B</h3><p>B{&lt;cond&gt;}label      跳转到label处执行，PC=label</p>
+<p>例子：<br>backword   SUB R1,R1,#1<br>      CMP R1,#0      比较R1和0<br>      BEQ forward     如果R1=0，跳转到forware处执行<br>      SUB R1,R2,#3<br>      SUB R1,R1,#1<br>forward   ADD R1,R2,#4<br>      ADD R2,R3,#2</p>
+<p>​      <strong>B backword      无条件跳转到backword处执行</strong></p>
+<h3 id="2）-带返回的分支指令BL"><a href="#2）-带返回的分支指令BL" class="headerlink" title="2）. 带返回的分支指令BL"></a>2）. 带返回的分支指令BL</h3><p>BL{&lt;cond&gt;}label     在跳转之前，将PC的当前内容保存在R14(LR)中保存，因此，可以通过将R14的内容重新加载到PC中，返回到跳转指令之后的指令处执行。该指令用于实现子程序的调用，程序的返回可通过把LR寄存器的值复制到PC寄存器中来实现。<br>例子：<br>BL func       跳转到子程序<br>ADD R1,R2,#2     子程序调用完返回后执行的语句，返回地址<br>….<br>func         子程序<br>…</p>
+<p><strong>MOV R15,R14     复制返回地址到PC，实现子程序的返回</strong></p>
+<h3 id="3）-带状态切换的分支指令BX"><a href="#3）-带状态切换的分支指令BX" class="headerlink" title="3）. 带状态切换的分支指令BX"></a>3）. 带状态切换的分支指令BX</h3><p>BX{&lt;cond&gt;} Rm    当执行BX指令时，如果条件cond满足，则处理器会判断Rm的位[0]是否为1，如果为1则跳转时自动将CPSR寄存器的标志T置位，并将目标地址的代码解释为Thumb代码来执行，则处理器会切换到Thumb状态，反之，若Rm的位[0]为0，则跳转时自动将CPSR寄存器的标志T复位，并将目标地址处的代码解释为ARM代码来执行，即处理器会切换到ARM状态。<br>注意：bx lr的作用等同于mov pc,lr。即跳转到lr中存放的地址处。 非零值存储在R0中返回。<br>那么lr存放的是什么地址呢？lr就是连接寄存器(Link Register, LR)，在ARM体系结构中LR的特殊用途有两种：一是用来保存子程序返回地址；二是当异常发生时，LR中保存的值等于异常发生时PC的值减4（或者减2），因此在各种异常模式下可以根据LR的值返回到异常发生前的相应位置继续执行。　　</p>
+<p><strong>当通过BL或BLX指令调用子程序时，硬件自动将子程序返回地址保存在R14寄存器中。在子程序返回时，把LR的值复制到程序计数器PC即可实现子程序返回。</strong></p>
+<h2 id="9-堆栈"><a href="#9-堆栈" class="headerlink" title="9.堆栈"></a>9.堆栈</h2><h3 id="1）-进栈出栈"><a href="#1）-进栈出栈" class="headerlink" title="1）. 进栈出栈"></a>1）. 进栈出栈</h3><p>出栈使用LDM指令，进栈使用STM指令。LDM和STM指令往往结合下面一些参数实现堆栈的操作。<br>FD:满递减堆栈。<br>ED:空递减堆栈。<br>FA:满递增堆栈。<br>EA:空递增堆栈。<br>满堆栈是指SP(R13)指向堆栈的最后一个已使用地址或满位置(也就是SP指向堆栈的最后一个数据项的位置)；相反，空堆栈是指SP指向堆栈的第一个没有使用的地址或空位置。</p>
+<p><strong>LDMFD和STMFD分别指POP出栈和PUSH入栈</strong></p>
+<h3 id="2）-PUSH指令"><a href="#2）-PUSH指令" class="headerlink" title="2）. PUSH指令"></a>2）. PUSH指令</h3><p>PUSH{cond} reglist    PUSH将寄存器推入满递减堆栈<br>PUSH {r0,r4-r7}     将R0,R4-R7寄存器内容压入堆栈<br>2.9.3. POP指令<br>POP{cond} reglist    POP从满递减堆栈中弹出数据到寄存器<br>POP {r0,r4-r7}      将R0,R4-R7寄存器从堆栈中弹出</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/">汇编</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/ARM/">ARM</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%B1%87%E7%BC%96/ARM/%E6%8C%87%E4%BB%A4/">指令</a>
+                    
+                  </div>
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/12/APCS%E7%AE%80%E4%BB%8B/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">APCS简介</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/11/ARM%E6%8C%87%E4%BB%A4%E9%9B%86/">
+                        <span class="hidden-mobile">ARM指令集</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "常用的ARM汇编指令基础知识&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
